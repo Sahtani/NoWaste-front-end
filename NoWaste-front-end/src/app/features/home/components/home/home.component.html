@@ -1,0 +1,525 @@
+<!-- src/app/features/home/home.component.html -->
+<div class="home-container">
+  <!-- Header/Navigation -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/nowaste-logo.svg" alt="NoWaste Logo" class="logo-img">
+          <span class="logo-text">NoWaste</span>
+        </div>
+        <nav class="nav">
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#how-it-works" class="nav-link">How It Works</a>
+          <a href="#impact" class="nav-link">Impact</a>
+          <a href="#about" class="nav-link">About Us</a>
+        </nav>
+        <div class="auth-buttons">
+          <button class="btn btn-outline" (click)="showLoginForm()">Login</button>
+          <button class="btn btn-primary" (click)="showSignupForm()">Get Started</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">Reduce Waste, Save Resources</h1>
+          <p class="hero-subtitle">
+            Track, manage, and minimize your waste with our innovative solution.
+            Join thousands making a difference for a more sustainable future.
+          </p>
+          <div class="hero-buttons">
+            <button class="btn btn-cta btn-lg" (click)="showSignupForm()">
+              Start For Free
+            </button>
+            <a href="#how-it-works" class="btn btn-text">
+              <span>See How It Works</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="assets/images/hero-illustration.svg" alt="NoWaste App Illustration">
+        </div>
+      </div>
+    </div>
+    <div class="hero-wave">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#f8f9fa" fill-opacity="1" d="M0,288L48,272C96,256,192,224,288,213.3C384,203,480,213,576,229.3C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
+    </div>
+  </section>
+
+  <!-- Character Cards Section -->
+  <section id="characters" class="characters">
+    <div class="container">
+      <h2 class="section-title">Meet Our NoWaste Champions</h2>
+      <p class="section-subtitle">Learn from their journeys to reduce waste and create a more sustainable lifestyle</p>
+
+      <div class="character-cards">
+        <!-- Character 1 -->
+        <div class="character-card">
+          <div class="character-image">
+            <img src="assets/images/character-1.svg" alt="Maya - Busy Parent">
+          </div>
+          <div class="character-content">
+            <h3 class="character-name">Maya</h3>
+            <p class="character-role">Busy Parent</p>
+            <p class="character-description">
+              "As a working mom of two, I needed a simple way to reduce our family's food waste.
+              NoWaste helps me plan meals better and track what we actually use."
+            </p>
+            <div class="character-stats">
+              <div class="stat">
+                <span class="stat-value">45%</span>
+                <span class="stat-label">Less Food Waste</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">$120</span>
+                <span class="stat-label">Monthly Savings</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Character 2 -->
+        <div class="character-card">
+          <div class="character-image">
+            <img src="assets/images/character-2.svg" alt="Alex - Urban Professional">
+          </div>
+          <div class="character-content">
+            <h3 class="character-name">Alex</h3>
+            <p class="character-role">Urban Professional</p>
+            <p class="character-description">
+              "Living in a small apartment, I was surprised how much waste I generated.
+              NoWaste's analytics helped me identify patterns and make conscious purchasing decisions."
+            </p>
+            <div class="character-stats">
+              <div class="stat">
+                <span class="stat-value">60%</span>
+                <span class="stat-label">Reduction</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">18kg</span>
+                <span class="stat-label">CO₂ Saved Monthly</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Character 3 -->
+        <div class="character-card">
+          <div class="character-image">
+            <img src="assets/images/character-3.svg" alt="Sam - Student">
+          </div>
+          <div class="character-content">
+            <h3 class="character-name">Sam</h3>
+            <p class="character-role">College Student</p>
+            <p class="character-description">
+              "On a student budget, I can't afford to waste food. The app helps me keep track of
+              what I have in my shared kitchen and reminds me to use items before they expire."
+            </p>
+            <div class="character-stats">
+              <div class="stat">
+                <span class="stat-value">40%</span>
+                <span class="stat-label">Budget Reduction</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">95%</span>
+                <span class="stat-label">Less Food Thrown Away</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features">
+    <div class="container">
+      <h2 class="section-title">Smart Features You'll Love</h2>
+      <p class="section-subtitle">Intuitive tools that make reducing waste simple and satisfying</p>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <h3 class="feature-title">Smart Tracking</h3>
+          <p class="feature-desc">
+            Easily log food items with our barcode scanner or quick-add interface. Track what you use and what goes to waste.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+              <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+          </div>
+          <h3 class="feature-title">Visual Analytics</h3>
+          <p class="feature-desc">
+            Beautiful charts and reports show your waste patterns and progress over time, helping you identify improvement areas.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="12" x2="2" y2="12"></line>
+              <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+              <line x1="6" y1="16" x2="6.01" y2="16"></line>
+              <line x1="10" y1="16" x2="10.01" y2="16"></line>
+            </svg>
+          </div>
+          <h3 class="feature-title">Shopping Assistant</h3>
+          <p class="feature-desc">
+            Get smart shopping lists based on your consumption patterns, helping you buy only what you'll actually use.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+          </div>
+          <h3 class="feature-title">Community Sharing</h3>
+          <p class="feature-desc">
+            Connect with neighbors to share excess food items, reducing waste while building community relationships.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section id="how-it-works" class="how-it-works">
+    <div class="container">
+      <h2 class="section-title">How NoWaste Works</h2>
+      <p class="section-subtitle">Your simple four-step journey to less waste</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3 class="step-title">Track Your Items</h3>
+            <p class="step-desc">
+              Log the food you purchase and discard. Our easy input methods make tracking quick and painless.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3 class="step-title">Get Insights</h3>
+            <p class="step-desc">
+              View personalized analytics that reveal your waste patterns and suggest areas for improvement.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3 class="step-title">Implement Changes</h3>
+            <p class="step-desc">
+              Follow personalized tips and shopping guidance to adjust your habits for less waste.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3 class="step-title">Track Your Impact</h3>
+            <p class="step-desc">
+              Watch your progress over time, seeing both environmental impact and financial savings.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Section -->
+  <section id="impact" class="impact">
+    <div class="container">
+      <h2 class="section-title">Our Collective Impact</h2>
+      <p class="section-subtitle">Together, NoWaste users are making a real difference</p>
+
+      <div class="impact-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="stat-value">25,000+</div>
+          <div class="stat-label">Active Users</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"></line>
+              <polyline points="5 12 12 5 19 12"></polyline>
+            </svg>
+          </div>
+          <div class="stat-value">120 Tons</div>
+          <div class="stat-label">Food Saved</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            </svg>
+          </div>
+          <div class="stat-value">240 Tons</div>
+          <div class="stat-label">CO₂ Reduction</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="stat-value">$1.2M</div>
+          <div class="stat-label">Money Saved</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="cta-title">Ready to Reduce Your Waste?</h2>
+        <p class="cta-desc">Join thousands of households making a positive impact on the planet while saving money.</p>
+        <button class="btn btn-cta btn-lg" (click)="showSignupForm()">Get Started Free</button>
+        <p class="cta-note">No credit card required • Free 30-day trial</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <img src="assets/images/nowaste-logo.svg" alt="NoWaste Logo" class="logo-img">
+          <span class="logo-text">NoWaste</span>
+          <p class="footer-tagline">Reducing waste one household at a time.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-links-column">
+            <h4 class="footer-links-title">Product</h4>
+            <a href="#" class="footer-link">Features</a>
+            <a href="#" class="footer-link">Pricing</a>
+            <a href="#" class="footer-link">Testimonials</a>
+            <a href="#" class="footer-link">FAQ</a>
+          </div>
+          <div class="footer-links-column">
+            <h4 class="footer-links-title">Company</h4>
+            <a href="#" class="footer-link">About Us</a>
+            <a href="#" class="footer-link">Team</a>
+            <a href="#" class="footer-link">Careers</a>
+            <a href="#" class="footer-link">Contact</a>
+          </div>
+          <div class="footer-links-column">
+            <h4 class="footer-links-title">Resources</h4>
+            <a href="#" class="footer-link">Blog</a>
+            <a href="#" class="footer-link">Guides</a>
+            <a href="#" class="footer-link">Support</a>
+            <a href="#" class="footer-link">Privacy Policy</a>
+          </div>
+        </div>
+        <div class="footer-newsletter">
+          <h4 class="footer-newsletter-title">Stay Updated</h4>
+          <p class="footer-newsletter-desc">Get tips and updates on reducing waste.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Enter your email" class="newsletter-input">
+            <button class="btn btn-primary">Subscribe</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 NoWaste. All rights reserved.</p>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+          </a>
+          <a href="#" class="social-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </a>
+          <a href="#" class="social-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal" [class.modal-active]="showLogin()">
+    <div class="modal-overlay" (click)="hideLoginForm()"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title">Login</h2>
+        <button class="modal-close" (click)="hideLoginForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input
+              type="email"
+              id="loginEmail"
+              formControlName="email"
+              placeholder="Enter your email"
+              class="form-control"
+              [class.form-control-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            >
+            <div class="form-error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+              Please enter a valid email.
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input
+              type="password"
+              id="loginPassword"
+              formControlName="password"
+              placeholder="Enter your password"
+              class="form-control"
+              [class.form-control-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            >
+            <div class="form-error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              Password is required.
+            </div>
+          </div>
+          <div class="form-group form-group-horizontal">
+            <div class="checkbox-group">
+              <input type="checkbox" id="rememberMe" formControlName="rememberMe">
+              <label for="rememberMe">Remember me</label>
+            </div>
+            <a href="#" class="link">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" [disabled]="loginForm.invalid">Login</button>
+        </form>
+        <div class="modal-divider">
+          <span>or continue with</span>
+        </div>
+        <div class="social-login">
+          <button class="btn btn-social btn-google">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+            Google
+          </button>
+          <button class="btn btn-social btn-facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+            Facebook
+          </button>
+        </div>
+        <div class="modal-footer">
+          <p>Don't have an account? <a href="#" class="link" (click)="switchToSignup()">Sign up</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal" [class.modal-active]="showSignup()">
+    <div class="modal-overlay" (click)="hideSignupForm()"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title">Create Account</h2>
+        <button class="modal-close" (click)="hideSignupForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+          <div class="form-group">
+            <label for="signupName">Full Name</label>
+            <input
+              type="text"
+              id="signupName"
+              formControlName="name"
+              placeholder="Enter your full name"
+              class="form-control"
+              [class.form-control-error]="signupForm.get('name')?.invalid && signupForm.get('name')?.touched"
+            >
+            <div class="form-error" *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched">
+              Name is required.
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupEmail">Email</label>
+            <input
+              type="email"
+              id="signupEmail"
+              formControlName="email"
+              placeholder="Enter your email"
+              class="form-control"
+              [class.form-control-error]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched"
+            >
+            <div class="form-error" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+              Please enter a valid email.
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <input
+              type="password"
+              id="signupPassword"
+              formControlName="password"
+              placeholder="Create a password (min. 8 characters)"
+              class="form-control"
+              [class.form-control-error]="signupForm.get('password')?.invalid && signupForm.get('password')?.touched"
+            >
+            <div class="form-error" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+              Password must be at least 8 characters.
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupConfirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="signupConfirmPassword"
+              formControlName="confirmPassword"
+              placeholder="Confirm your password"
+              class="form-control"
+              [class.form-control-error]="signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched"
+            >
+            <div class="form-error" *ngIf="signupForm.hasError('mismatch') && signupForm.get('confirmPassword')?.touched">
+              Passwords do not match.
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
