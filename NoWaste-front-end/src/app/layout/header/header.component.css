@@ -1,0 +1,101 @@
+/* src/app/shared/components/header/header.component.css */
+/* Header/Nav */
+.header {
+  padding: 16px 0;
+  background-color: var(--white);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  height: 36px;
+  margin-right: 12px;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  font-family: 'Poppins', sans-serif;
+}
+
+.nav {
+  display: flex;
+}
+
+.nav-link {
+  color: var(--text-color);
+  text-decoration: none;
+  margin: 0 16px;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+  position: relative;
+  padding: 8px 0;
+}
+
+.nav-link:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width var(--transition-fast);
+}
+
+.nav-link:hover {
+  color: var(--primary-color);
+}
+
+.nav-link:hover:after {
+  width: 100%;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .header .header-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header .nav {
+    margin: 16px 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .header .nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .header .nav .nav-link {
+    margin: 5px;
+  }
+
+  .header .auth-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+}

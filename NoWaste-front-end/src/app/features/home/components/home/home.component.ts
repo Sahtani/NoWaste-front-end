@@ -1,27 +1,44 @@
 
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import {HeaderComponent} from '../../../../layout/header/header.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HeaderComponent, NgOptimizedImage],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
-  // UI state signals
   showLogin = signal(false);
   showSignup = signal(false);
 
-  // Form groups
-  loginForm: FormGroup;
-  signupForm: FormGroup ;
+  loginForm: FormGroup = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+    rememberMe: [false]
+  });
+
+  signupForm: FormGroup = this.fb.group({
+    name: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
+    confirmPassword: ['', Validators.required],
+    agreeTerms: [false, Validators.requiredTrue]
+  }, { validator: this.passwordMatchValidator });
+  handleHeaderLoginClick(show: boolean): void {
+    this.showLogin.set(show);
+  }
+
+  handleHeaderSignupClick(show: boolean): void {
+    this.showSignup.set(show);
+  }
 
   // Stats for display
   impactStats = [
@@ -58,7 +75,6 @@ export class HomeComponent {
     const confirmPassword = g.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
   }
-
   showLoginForm(): void {
     this.showLogin.set(true);
     this.showSignup.set(false);
