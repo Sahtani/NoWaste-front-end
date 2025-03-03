@@ -1,0 +1,233 @@
+<!-- signup.component.html -->
+<div class="fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 ease-in-out"
+     [class.opacity-0]="!isVisible"
+     [class.invisible]="!isVisible"
+     [class.pointer-events-none]="!isVisible">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="hideModal()"></div>
+  <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 z-10 transition-all duration-300 transform overflow-auto max-h-[90vh]"
+       [class.scale-95]="!isVisible"
+       [class.scale-100]="isVisible">
+
+    <!-- Modal Header -->
+    <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
+      <h2 class="text-xl font-display font-semibold text-#264653">Create Account</h2>
+      <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-colors" (click)="hideModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6">
+      <!-- Success Alert -->
+      <div *ngIf="registrationSuccess" class="mb-6 p-4 bg-green-100 text-green-800 rounded-lg">
+        <div class="flex">
+          <svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          <div>
+            <p class="font-medium">Registration successful!</p>
+            <p class="text-sm">You can now log in with your credentials.</p>
+          </div>
+        </div>
+        <div class="mt-3 text-center">
+          <button (click)="onSwitchToLogin()" class="text-green-700 font-medium hover:underline">
+            Go to Login
+          </button>
+        </div>
+      </div>
+
+      <!-- Error Alert -->
+      <div *ngIf="registrationError" class="mb-6 p-4 bg-red-100 text-red-800 rounded-lg">
+        {{ registrationError }}
+      </div>
+
+      <form *ngIf="!registrationSuccess" [formGroup]="signupForm" (ngSubmit)="onSignup()">
+        <!-- Full Name Field -->
+        <div class="mb-4">
+          <label for="signupName" class="block mb-2 text-sm font-medium text-gray-700">Full Name</label>
+          <input
+            type="text"
+            id="signupName"
+            formControlName="name"
+            placeholder="Enter your full name"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2A9D8F]/50 focus:border-[#2A9D8F] transition-colors"
+            [class.border-red-500]="signupForm.get('name')?.invalid && signupForm.get('name')?.touched"
+          >
+          <div class="mt-1 text-sm text-red-500" *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched">
+            Name is required.
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="mb-4">
+          <label for="signupEmail" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
+          <input
+            type="email"
+            id="signupEmail"
+            formControlName="email"
+            placeholder="Enter your email"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2A9D8F]/50 focus:border-[#2A9D8F] transition-colors"
+            [class.border-red-500]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched"
+          >
+          <div class="mt-1 text-sm text-red-500" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+            Please enter a valid email.
+          </div>
+        </div>
+
+        <!-- Phone Field -->
+        <div class="mb-4">
+          <label for="signupPhone" class="block mb-2 text-sm font-medium text-gray-700">Phone Number</label>
+          <input
+            type="tel"
+            id="signupPhone"
+            formControlName="phone"
+            placeholder="Enter your phone number"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2A9D8F]/50 focus:border-[#2A9D8F] transition-colors"
+            [class.border-red-500]="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched"
+          >
+          <div class="mt-1 text-sm text-red-500" *ngIf="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched">
+            Please enter a valid phone number.
+          </div>
+        </div>
+
+        <!-- Address Field -->
+        <div class="mb-4">
+          <label for="signupAddress" class="block mb-2 text-sm font-medium text-gray-700">Address</label>
+          <textarea
+            id="signupAddress"
+            formControlName="address"
+            placeholder="Enter your address"
+            rows="2"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2A9D8F]/50 focus:border-[#2A9D8F] transition-colors"
+            [class.border-red-500]="signupForm.get('address')?.invalid && signupForm.get('address')?.touched"
+          ></textarea>
+          <div class="mt-1 text-sm text-red-500" *ngIf="signupForm.get('address')?.invalid && signupForm.get('address')?.touched">
+            Address is required.
+          </div>
+        </div>
+
+        <!-- User Role Selection -->
+        <!-- User Role Selection -->
+        <div class="mb-4">
+          <label class="block mb-2 text-sm font-medium text-gray-700">Account Type</label>
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Option Donor -->
+            <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-[#2A9D8F] transition-colors"
+                   [class.border-[#2A9D8F]]="signupForm.get('role')?.value === 'DONOR'">
+              <input type="radio" name="role" [value]="'DONOR'" formControlName="role" class="hidden">
+              <div class="w-4 h-4 mr-2 rounded-full border border-gray-400 flex items-center justify-center"
+                   [class.bg-[#2A9D8F]]="signupForm.get('role')?.value === 'DONOR'">
+                <div class="w-2 h-2 rounded-full bg-white" *ngIf="signupForm.get('role')?.value === 'DONOR'"></div>
+              </div>
+              <span>Donor</span>
+            </label>
+
+            <!-- Option Beneficiary -->
+            <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-[#2A9D8F] transition-colors"
+                   [class.border-[#2A9D8F]]="signupForm.get('role')?.value === 'BENEFICIARY'">
+              <input type="radio" name="role" [value]="'BENEFICIARY'" formControlName="role" class="hidden">
+              <div class="w-4 h-4 mr-2 rounded-full border border-gray-400 flex items-center justify-center"
+                   [class.bg-[#2A9D8F]]="signupForm.get('role')?.value === 'BENEFICIARY'">
+                <div class="w-2 h-2 rounded-full bg-white" *ngIf="signupForm.get('role')?.value === 'BENEFICIARY'"></div>
+              </div>
+              <span>Beneficiary</span>
+            </label>
+          </div>
+          <div class="mt-1 text-sm text-red-500" *ngIf="signupForm.get('role')?.invalid && signupForm.get('role')?.touched">
+            Please select an account type.
+          </div>
+        </div>
+
+        <p>Selected Role: {{ signupForm.get('role')?.value }}</p>
+
+        <!-- Password Field -->
+        <div class="mb-4">
+          <label for="signupPassword" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
+          <input
+            type="password"
+            id="signupPassword"
+            formControlName="password"
+            placeholder="Create a password (min. 8 characters)"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2A9D8F]/50 focus:border-[#2A9D8F] transition-colors"
+            [class.border-red-500]="signupForm.get('password')?.invalid && signupForm.get('password')?.touched"
+          >
+          <div class="mt-1 text-sm text-red-500" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+            Password must be at least 8 characters.
+          </div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="mb-4">
+          <label for="signupConfirmPassword" class="block mb-2 text-sm font-medium text-gray-700">Confirm Password</label>
+          <input
+            type="password"
+            id="signupConfirmPassword"
+            formControlName="confirmPassword"
+            placeholder="Confirm your password"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2A9D8F]/50 focus:border-[#2A9D8F] transition-colors"
+            [class.border-red-500]="signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched"
+          >
+          <div class="mt-1 text-sm text-red-500" *ngIf="signupForm.hasError('mismatch') && signupForm.get('confirmPassword')?.touched">
+            Passwords do not match.
+          </div>
+        </div>
+
+        <!-- Terms Checkbox -->
+        <div class="mb-6 flex items-start">
+          <div class="flex items-center h-5">
+            <input
+              id="agreeTerms"
+              type="checkbox"
+              formControlName="agreeTerms"
+              class="w-4 h-4 text-[#2A9D8F] bg-gray-100 rounded border-gray-300 focus:ring-[#2A9D8F] focus:ring-2"
+            >
+          </div>
+          <label for="agreeTerms" class="ml-2 text-sm text-gray-700">
+            I agree to the <a href="#" class="text-[#2A9D8F] hover:underline">Terms of Service</a> and <a href="#" class="text-[#2A9D8F] hover:underline">Privacy Policy</a>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full py-3 px-4 bg-[#2A9D8F] hover:bg-[#227c71] text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+          [disabled]="signupForm.invalid || isRegistering">
+          <svg *ngIf="isRegistering" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ isRegistering ? 'Creating Account...' : 'Create Account' }}
+        </button>
+      </form>
+
+      <!-- Only show social login options and login link if not in success state -->
+      <ng-container *ngIf="!registrationSuccess">
+        <!-- Divider -->
+        <div class="relative flex items-center my-6">
+          <div class="flex-grow border-t border-gray-300"></div>
+          <span class="flex-shrink mx-4 text-sm text-gray-500">or continue with</span>
+          <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+
+        <!-- Social Login Buttons -->
+        <div class="grid grid-cols-2 gap-3">
+          <button type="button" class="flex items-center justify-center py-2.5 px-4 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg transition-colors shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="mr-2 text-red-500"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+            Google
+          </button>
+          <button type="button" class="flex items-center justify-center py-2.5 px-4 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg transition-colors shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="mr-2 text-blue-600"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+            Facebook
+          </button>
+        </div>
+
+        <!-- Login Link -->
+        <div class="text-center mt-6">
+          <p class="text-gray-600">
+            Already have an account? <a class="text-[#2A9D8F] hover:underline cursor-pointer" (click)="onSwitchToLogin()">Login</a>
+          </p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
