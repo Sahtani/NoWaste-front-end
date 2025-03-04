@@ -47,13 +47,11 @@ export class HomeComponent {
   }
 
   handleLoginSuccess(response: any): void {
-    // Store token in local storage
-    localStorage.setItem('auth_token', response.token);
+   // localStorage.setItem('auth_token', response.token);
+    console.log('Login successful', response);
 
-    // Hide modal
     this.hideLoginModal();
 
-    // Navigate to dashboard
     this.router.navigate(['/dashboard']);
   }
 
