@@ -147,7 +147,7 @@ body {
   margin-top: 0.5rem;
 }
 
-/* Product card styles */
+/* ProductModel card styles */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

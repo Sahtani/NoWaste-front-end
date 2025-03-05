@@ -10,7 +10,9 @@ import {Router} from '@angular/router';
 export class AuthService {
   private apiUrl = environment.apiUrl;
   private router = inject(Router);
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient) {
+  }
 
   register(userData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData);
@@ -38,6 +40,7 @@ export class AuthService {
     localStorage.removeItem('user_info');
     this.router.navigate(['/dashboard']);
   }
+
   isAuthenticated(): boolean {
     return !!localStorage.getItem('auth_token');
   }
