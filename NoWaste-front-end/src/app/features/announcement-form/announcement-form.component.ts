@@ -1,11 +1,17 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Announcement} from '../../core/models/announcement.model';
 import {Product, ProductStatus} from '../../core/models/product.model';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-announcement-form',
   templateUrl: './announcement-form.component.html',
+  imports: [
+    ReactiveFormsModule,
+    NgIf,
+    NgForOf
+  ],
   styleUrls: ['./announcement-form.component.css']
 })
 export class AnnouncementFormComponent implements OnInit, OnChanges {
@@ -44,6 +50,7 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
 
   initForm(): void {
     this.announcementForm = this.fb.group({
+      title: ['', Validators.required],
       createdAt: [new Date().toISOString().split('T')[0], Validators.required],
       postedDate: [new Date().toISOString(), Validators.required],
       products: this.fb.array([this.createProductFormGroup()])
@@ -172,12 +179,12 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
 
     const announcementData: Announcement = {
       id: this.editingAnnouncement?.id,
+      title: this.announcementForm.get('title')?.value,
       createdAt: this.announcementForm.get('createdAt')?.value,
       postedDate: this.announcementForm.get('postedDate')?.value,
       produits: products,
       userId: 1
     };
-
     this.save.emit(announcementData);
   }
 

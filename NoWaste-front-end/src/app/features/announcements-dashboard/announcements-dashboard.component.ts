@@ -1,12 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { AnnouncementService } from '../../core/services/announcement.service';
-import { DatePipe } from '@angular/common';
+import {DatePipe, NgClass, NgForOf, NgIf, SlicePipe} from '@angular/common';
 import {Announcement} from '../../core/models/announcement.model';
 import {ProductStatus} from '../../core/models/product.model';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-announcements-dashboard',
   templateUrl: './announcements-dashboard.component.html',
+  imports: [
+    FormsModule,
+    NgForOf,
+    NgIf,
+    NgClass,
+    SlicePipe
+  ],
   styleUrls: ['./announcements-dashboard.component.css']
 })
 export class AnnouncementsDashboardComponent implements OnInit {
@@ -123,7 +131,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
   }
 
   // CRUD Operations
-  saveAnnouncement(announcementData: Announcement): void {
+ /* saveAnnouncement(announcementData: Announcement): void {
     this.isSaving = true;
 
     if (announcementData.id) {
@@ -143,7 +151,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
       });
     }
   }
-
+*/
   deleteAnnouncement(): void {
     if (!this.announcementToDelete) return;
 
