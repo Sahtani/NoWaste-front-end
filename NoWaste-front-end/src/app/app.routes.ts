@@ -9,13 +9,12 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   {
     path: 'announcements',
-    component: AnnouncementsDashboardComponent}
-  ,
-   /* canActivate: [authGuard],
+    component: AnnouncementsDashboardComponent,
+   canActivate: [authGuard],
     data: {
       roles: ['DONOR', 'beneficiary']
     }
-  }*/
+  }
 
 
 ];

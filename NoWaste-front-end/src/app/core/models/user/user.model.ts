@@ -20,6 +20,6 @@ export interface User {
   email: string;
   phone?: string;
   avatar?: string;
-  roles: Roles[];
+  role: Roles[];
   createdAt?: Date;
 }

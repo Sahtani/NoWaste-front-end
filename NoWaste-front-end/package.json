@@ -6,8 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:NoWaste-front-end": "node dist/no-waste-front-end/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -17,9 +16,7 @@
     "@angular/forms": "^19.2.0",
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
-    "@angular/platform-server": "^19.2.0",
     "@angular/router": "^19.2.0",
-    "@angular/ssr": "^19.2.0",
     "@tailwindcss/postcss": "^4.0.9",
     "express": "^4.18.2",
     "rxjs": "~7.8.0",
