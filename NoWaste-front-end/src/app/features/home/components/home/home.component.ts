@@ -50,22 +50,35 @@ export class HomeComponent {
   handleLoginSuccess(response: AuthenticationResponse): void {
     this.hideLoginModal();
 
-    // Vérification défensive
     if (!response || !response.role) {
       this.router.navigate(['/announcements']);
       return;
     }
 
     // Navigation basée sur le rôle
-    if (response.role.includes('DONOR')) {
-      this.router.navigate(['/announcements']);
-    } else if (response.role.includes('BENEFICIARY')) {
-      this.router.navigate(['/beneficiary-dashboard']);
-    } else if (response.role.includes('ADMIN')) {
-      this.router.navigate(['/admin-dashboard']);
+    // Vérifier le rôle et rediriger en conséquence
+    if (Array.isArray(response.role)) {
+      // Si role est un tableau
+      if (response.role.includes('DONOR')) {
+        this.router.navigate(['/announcements']);
+      } else if (response.role.includes('BENEFICIARY')) {
+        this.router.navigate(['/beneficiary-dashboard']);
+      } else if (response.role.includes('ADMIN')) {
+        this.router.navigate(['/admin-dashboard']);
+      } else {
+        this.router.navigate(['/announcements']);
+      }
     } else {
-      // Redirection par défaut
-      this.router.navigate(['/announcements']);
+      // Si role est une valeur unique (string)
+      if (response.role === 'DONOR') {
+        this.router.navigate(['/announcements']);
+      } else if (response.role === 'BENEFICIARY') {
+        this.router.navigate(['/beneficiary-dashboard']);
+      } else if (response.role === 'ADMIN') {
+        this.router.navigate(['/admin-dashboard']);
+      } else {
+        this.router.navigate(['/announcements']);
+      }
     }
   }
   handleSignupSuccess(response: any): void {

@@ -53,6 +53,21 @@ export class AnnouncementsDashboardComponent implements OnInit {
     this.loadAnnouncements();
   }
 
+  /*loadAnnouncements(): void {
+    this.isLoading = true;
+    this.announcementService.getAnnouncements().subscribe({
+      next: (data) => {
+        this.announcements = data;
+        this.applyFilters();
+        this.calculateTotalPages();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading announcements', error);
+        this.isLoading = false;
+      }
+    });
+  }*/
   loadAnnouncements(): void {
     this.isLoading = true;
     this.announcementService.getAnnouncements().subscribe({
@@ -68,7 +83,6 @@ export class AnnouncementsDashboardComponent implements OnInit {
       }
     });
   }
-
   applyFilters(): void {
     let filtered = [...this.announcements];
 

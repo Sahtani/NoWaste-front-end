@@ -7,12 +7,6 @@ export enum Roles {
   GUEST = 'GUEST'
 }
 
-
-
-
-
-
-
 export interface User {
   id?: string;
   firstName: string;

@@ -85,7 +85,8 @@
         <div class="relative">
           <!-- Use an image from the first product if available -->
           <div class="h-48 w-full bg-gray-200 flex items-center justify-center overflow-hidden">
-            <img *ngIf="announcement.produits[0]?.image" [src]="announcement.produits[0].image"
+           <!-- *ngIf="announcement.produits[0]?.image"-->
+            <img  [src]="announcement.produits[0].image"
                  alt="Product image" class="h-full w-full object-cover">
             <svg *ngIf="!announcement.produits[0]?.image" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                  stroke-width="1" stroke="currentColor" class="w-16 h-16 text-gray-400">
