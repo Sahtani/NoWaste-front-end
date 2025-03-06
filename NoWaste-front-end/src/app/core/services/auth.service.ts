@@ -3,7 +3,9 @@ import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Observable, tap} from 'rxjs';
 import {Router} from '@angular/router';
-import {User} from '../models/user.model';
+import {User} from '../models/user/user.model';
+import {AuthenticationRequest} from '../../shared/interfaces/requests/AuthenticationRequest';
+import {AuthenticationResponse} from '../models/authentication-response';
 
 @Injectable({
   providedIn: 'root'
@@ -20,16 +22,16 @@ export class AuthService {
   }
 
 
-  login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, credentials)
+  login(credentials: { email: string; password: string  }): Observable<AuthenticationResponse> {
+    return this.http.post<AuthenticationResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
 
-          if (response && response.token) {
-            localStorage.setItem('auth_token', response.token);
+          if (response && response.access_token) {
+            localStorage.setItem('auth_token', response.access_token);
 
-            if (response.user) {
-              localStorage.setItem('user_info', JSON.stringify(response.user));
+            if (response) {
+              localStorage.setItem('user_info', JSON.stringify(response));
             }
           }
         })

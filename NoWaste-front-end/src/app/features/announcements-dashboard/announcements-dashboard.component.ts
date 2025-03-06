@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AnnouncementService } from '../../core/services/announcement.service';
 import {DatePipe, NgClass, NgForOf, NgIf, SlicePipe} from '@angular/common';
-import {Announcement} from '../../core/models/announcement.model';
+import {Announcement} from '../../core/models/announcement/announcement.model';
 import {ProductStatus} from '../../core/models/product.model';
 import {FormsModule} from '@angular/forms';
 
@@ -15,6 +15,7 @@ import {FormsModule} from '@angular/forms';
     NgClass,
     SlicePipe
   ],
+  providers: [DatePipe],
   styleUrls: ['./announcements-dashboard.component.css']
 })
 export class AnnouncementsDashboardComponent implements OnInit {

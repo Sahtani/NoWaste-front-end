@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Announcement} from '../../core/models/announcement.model';
+import {Announcement} from '../../core/models/announcement/announcement.model';
 import {Product, ProductStatus} from '../../core/models/product.model';
 import {NgForOf, NgIf} from '@angular/common';
 

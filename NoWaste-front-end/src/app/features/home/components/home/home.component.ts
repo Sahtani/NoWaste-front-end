@@ -1,11 +1,12 @@
-
-import { Component, inject, signal } from '@angular/core';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import {Component, inject, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ReactiveFormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
 import {HeaderComponent} from '../../../../layout/header/header.component';
 import {LoginComponent} from '../../../auth/login/login.component';
 import {RegisterComponent} from '../../../auth/register/register.component';
+import {Roles, User} from '../../../../core/models/user/user.model';
+import {AuthenticationResponse} from '../../../../core/models/authentication-response';
 
 @Component({
   selector: 'app-home',
@@ -46,15 +47,27 @@ export class HomeComponent {
     this.showLogin.set(true);
   }
 
-  handleLoginSuccess(response: any): void {
-   // localStorage.setItem('auth_token', response.token);
-    console.log('Login successful', response);
-
+  handleLoginSuccess(response: AuthenticationResponse): void {
     this.hideLoginModal();
 
-    this.router.navigate(['/dashboard']);
-  }
+    // Vérification défensive
+    if (!response || !response.role) {
+      this.router.navigate(['/announcements']);
+      return;
+    }
 
+    // Navigation basée sur le rôle
+    if (response.role.includes('DONOR')) {
+      this.router.navigate(['/announcements']);
+    } else if (response.role.includes('BENEFICIARY')) {
+      this.router.navigate(['/beneficiary-dashboard']);
+    } else if (response.role.includes('ADMIN')) {
+      this.router.navigate(['/admin-dashboard']);
+    } else {
+      // Redirection par défaut
+      this.router.navigate(['/announcements']);
+    }
+  }
   handleSignupSuccess(response: any): void {
     // Maybe show a success message or something else
     console.log('Signup successful', response);

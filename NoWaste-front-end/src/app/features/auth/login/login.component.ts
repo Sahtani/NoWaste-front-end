@@ -2,6 +2,7 @@ import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../core/services/auth.service';
 import {NgIf} from '@angular/common';
+import {Router} from '@angular/router';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class LoginComponent {
   loginError: string | null = null;
 
   private fb = inject(FormBuilder);
+  constructor(private router: Router) {}
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
