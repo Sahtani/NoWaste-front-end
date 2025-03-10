@@ -4,9 +4,15 @@
     (onSignup)="showSignup.set(true)">
   </app-header>
 
-  <!-- Hero Section -->
-  <section class="relative bg-white pt-16 pb-8 overflow-hidden">
-    <div class="container mx-auto px-4">
+  <section class="relative pt-16 pb-8 overflow-hidden bg-gradient-to-br from-white via-[#F2F9F9] to-[#E8F4F2]">
+    <!-- Décoration d'arrière-plan (cercles/bulles) -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      <div class="absolute top-10 left-10 w-64 h-64 rounded-full bg-[#2A9D8F]/5 blur-xl"></div>
+      <div class="absolute bottom-40 right-20 w-72 h-72 rounded-full bg-[#E76F51]/5 blur-xl"></div>
+      <div class="absolute top-40 right-10 w-40 h-40 rounded-full bg-[#2A9D8F]/10 blur-lg"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
       <div class="flex flex-col md:flex-row items-center justify-between gap-10">
         <div class="max-w-xl">
           <h1 class="text-4xl md:text-5xl font-display font-bold text-[#264653] leading-tight mb-6">Reduce Waste, Save
@@ -31,9 +37,23 @@
           </div>
         </div>
         <div class="w-full md:w-1/2 flex justify-center">
-          <img alt="NoWaste App Illustration" class="w-full max-w-md animate-float shadow-[0_10px_15px_rgba(0,0,0,0.1)] rounded-lg"
-               height="1786"
-               src="assets/images/home-page.jpg" width="1811">
+          <div class="relative">
+            <img
+              alt="NoWaste App Illustration"
+              class="w-full max-w-md rounded-lg relative z-10 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+              height="1786"
+              src="/assets/images/ecological-bag-desk.jpg"
+              width="1811">
+
+            <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-[#2A9D8F]/10 rounded-full blur-md -z-10"></div>
+            <div class="absolute -top-3 -left-3 w-24 h-24 bg-[#E76F51]/10 rounded-full blur-md -z-10"></div>
+
+            <div class="absolute top-1/4 -right-3 flex flex-col gap-2">
+              <div class="w-2 h-2 rounded-full bg-[#2A9D8F]"></div>
+              <div class="w-2 h-2 rounded-full bg-[#2A9D8F]/70"></div>
+              <div class="w-2 h-2 rounded-full bg-[#2A9D8F]/40"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -44,7 +64,6 @@
       </svg>
     </div>
   </section>
-
   <!-- Character Cards Section -->
   <section class="py-16 bg-gray-50" id="characters">
     <div class="container mx-auto px-4">
@@ -59,7 +78,7 @@
           class="bg-white rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-[0_10px_15px_rgba(0,0,0,0.1)] hover:-translate-y-1">
           <div class="h-48 bg-gray-100 overflow-hidden">
             <img alt="Maya - Busy Parent" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                 src="assets/images/character-1.svg">
+                 src="../../../../../../public/assets/images/character-1.svg">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-display font-semibold text-[#264653] mb-1">Maya</h3>
@@ -86,7 +105,7 @@
           class="bg-white rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-[0_10px_15px_rgba(0,0,0,0.1)] hover:-translate-y-1">
           <div class="h-48 bg-gray-100 overflow-hidden">
             <img alt="Alex - Urban Professional" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                 src="assets/images/character-2.svg">
+                 src="../../../../../../public/assets/images/character-2.svg">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-display font-semibold text-[#264653] mb-1">Alex</h3>
@@ -113,7 +132,7 @@
           class="bg-white rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-[0_10px_15px_rgba(0,0,0,0.1)] hover:-translate-y-1">
           <div class="h-48 bg-gray-100 overflow-hidden">
             <img alt="Sam - Student" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                 src="assets/images/character-3.svg">
+                 src="../../../../../../public/assets/images/character-3.svg">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-display font-semibold text-[#264653] mb-1">Sam</h3>
@@ -379,7 +398,8 @@
         <!-- Logo & Info -->
         <div>
           <div class="flex items-center mb-4">
-            <img alt="NoWaste Logo" class="h-9 mr-3 brightness-0 invert" src="assets/images/nowaste-logo.svg">
+            <img alt="NoWaste Logo" class="h-9 mr-3 brightness-0 invert"
+                 src="../../../../../../public/assets/images/nowaste-logo.svg">
             <span class="text-2xl font-display font-bold">NoWaste</span>
           </div>
           <p class="text-gray-300 mb-4">Reducing waste one household at a time.</p>

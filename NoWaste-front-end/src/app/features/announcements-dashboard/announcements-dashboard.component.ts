@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { AnnouncementService } from '../../core/services/announcement.service';
+import {Component, OnInit} from '@angular/core';
+import {AnnouncementService} from '../../core/services/announcement/announcement.service';
 import {DatePipe, NgClass, NgForOf, NgIf, SlicePipe} from '@angular/common';
 import {Announcement} from '../../core/models/announcement/announcement.model';
 import {ProductStatus} from '../../core/models/product.model';
 import {FormsModule} from '@angular/forms';
+import {AnnouncementFormComponent} from '../announcement-form/announcement-form.component';
 
 @Component({
   selector: 'app-announcements-dashboard',
@@ -13,7 +14,8 @@ import {FormsModule} from '@angular/forms';
     NgForOf,
     NgIf,
     NgClass,
-    SlicePipe
+    SlicePipe,
+    AnnouncementFormComponent
   ],
   providers: [DatePipe],
   styleUrls: ['./announcements-dashboard.component.css']
@@ -52,22 +54,6 @@ export class AnnouncementsDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadAnnouncements();
   }
-
-  /*loadAnnouncements(): void {
-    this.isLoading = true;
-    this.announcementService.getAnnouncements().subscribe({
-      next: (data) => {
-        this.announcements = data;
-        this.applyFilters();
-        this.calculateTotalPages();
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading announcements', error);
-        this.isLoading = false;
-      }
-    });
-  }*/
   loadAnnouncements(): void {
     this.isLoading = true;
     this.announcementService.getAnnouncements().subscribe({
@@ -146,27 +132,65 @@ export class AnnouncementsDashboardComponent implements OnInit {
   }
 
   // CRUD Operations
- /* saveAnnouncement(announcementData: Announcement): void {
+
+  saveAnnouncement(announcementData: Announcement): void {
     this.isSaving = true;
 
+    const formatDate = (dateStr: string | null | undefined) => {
+      if (!dateStr) return new Date().toISOString();
+      if (dateStr.length === 10) return `${dateStr}T00:00:00`;
+      return dateStr;
+    };
+
+    const payload = {
+      title: announcementData.title || '',
+      produits: announcementData.produits.map(p => ({
+        id: p.id || null,
+        name: p.name,
+        category: p.category,
+        description: p.description,
+        price: p.price || 0.0,
+        quantity: p.quantity,
+        expirationDate: formatDate(p.expirationDate),
+        location: p.location,
+        image: p.image || "https://exemple.com/images/default.jpg",
+        status: p.status || "AVAILABLE",
+        announcementId: announcementData.id || null
+      }))
+    };
+
+    console.log('Payload envoyé:', payload);
+
     if (announcementData.id) {
-      this.announcementService.updateAnnouncement(announcementData.id, announcementData).subscribe({
+      this.announcementService.updateAnnouncement(announcementData.id, payload).subscribe({
         next: (updatedAnnouncement) => {
           this.handleSuccessfulSave(updatedAnnouncement, 'Annonce mise à jour avec succès');
         },
-        error: (error) => this.handleSaveError(error)
+        error: (error) => {
+          console.error('Détails de l\'erreur:', error);
+          this.handleSaveError(error);
+        },
+        complete: () => {
+          this.isSaving = false;
+        }
       });
     } else {
-
-      this.announcementService.createAnnouncement(announcementData).subscribe({
+      this.announcementService.createAnnouncement(payload).subscribe({
         next: (newAnnouncement) => {
           this.handleSuccessfulSave(newAnnouncement, 'Annonce créée avec succès');
         },
-        error: (error) => this.handleSaveError(error)
+        error: (error) => {
+          console.error('Détails de l\'erreur:', error);
+          this.handleSaveError(error);
+        },
+        complete: () => {
+          this.isSaving = false;
+        }
       });
     }
   }
-*/
+
+
   deleteAnnouncement(): void {
     if (!this.announcementToDelete) return;
 
@@ -178,13 +202,11 @@ export class AnnouncementsDashboardComponent implements OnInit {
         this.showDeleteModal = false;
         this.announcementToDelete = null;
         this.isDeleting = false;
-        // Show success notification
         alert('Annonce supprimée avec succès');
       },
       error: (error) => {
         console.error('Erreur lors de la suppression de l\'annonce', error);
         this.isDeleting = false;
-        // Show error notification
         alert('Erreur lors de la suppression de l\'annonce');
       }
     });
@@ -192,13 +214,11 @@ export class AnnouncementsDashboardComponent implements OnInit {
 
   private handleSuccessfulSave(announcement: Announcement, message: string): void {
     if (this.editingAnnouncement) {
-      // Update in local array
       const index = this.announcements.findIndex(a => a.id === announcement.id);
       if (index !== -1) {
         this.announcements[index] = announcement;
       }
     } else {
-      // Add to local array
       this.announcements.unshift(announcement);
     }
 
@@ -206,18 +226,15 @@ export class AnnouncementsDashboardComponent implements OnInit {
     this.closeAnnouncementModal();
     this.isSaving = false;
 
-    // Show success notification
     alert(message);
   }
 
   private handleSaveError(error: any): void {
     console.error('Erreur lors de l\'enregistrement de l\'annonce', error);
     this.isSaving = false;
-    // Show error notification
     alert('Erreur lors de l\'enregistrement de l\'annonce');
   }
 
-  // Pagination methods
   calculateTotalPages(): void {
     this.totalPages = Math.ceil(this.filteredAnnouncements.length / this.pageSize);
   }

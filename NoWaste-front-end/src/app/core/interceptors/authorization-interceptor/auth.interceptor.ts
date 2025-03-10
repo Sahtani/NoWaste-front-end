@@ -16,7 +16,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       catchError(error => {
         if (error.status === 401) {
           localStorage.removeItem('auth_token');
-          router.navigate(['/login']);
+          router.navigate(['']);
         }
         return throwError(() => error);
       })

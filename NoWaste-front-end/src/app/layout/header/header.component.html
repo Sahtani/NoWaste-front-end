@@ -3,8 +3,15 @@
   <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row justify-between items-center py-4 gap-4">
       <div class="flex items-center">
-        <img src="assets/images/nowaste-logo.svg" alt="NoWaste Logo" class="h-9 mr-3">
-        <span class="text-2xl font-display font-bold text-[#2A9D8F]">NoWaste</span>
+        <div class="flex items-center gap-2 cursor-pointer ml-8">
+          <div class="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#2A9D8F] to-[#4CAF50] flex justify-center items-center shadow-sm">
+            <div class="absolute w-4 h-4 bg-white rounded-tr-full rounded-bl-full transform rotate-45"></div>
+          </div>
+          <!-- Logo Text -->
+          <span class="text-2xl font-display font-bold">
+            <span class="text-[#2A9D8F]">No</span><span class="text-[#264653]">Waste</span>
+          </span>
+        </div>
       </div>
       <nav class="flex flex-wrap justify-center md:justify-start gap-2 md:gap-6">
         <a href="#features" class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">Features</a>
@@ -12,9 +19,9 @@
         <a href="#impact" class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">Impact</a>
         <a href="#about" class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">About Us</a>
       </nav>
-      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mr-8">
         <button (click)="loginClick()" class="border border-[#2A9D8F] text-[#2A9D8F] hover:bg-[#2A9D8F]/5 px-4 py-2 rounded-lg font-medium transition-colors">Login</button>
-        <button (click)="signupClick()" class="bg-[#2A9D8F] hover:bg-[#2A9D8F]-dark text-white px-4 py-2 rounded-lg font-medium shadow-[0_4px_6px_rgba(0,0,0,0.07)] transition-colors">Get Started</button>
+        <button (click)="signupClick()" class="bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white px-4 py-2 rounded-lg font-medium shadow-[0_4px_6px_rgba(0,0,0,0.07)] transition-colors">Get Started</button>
       </div>
     </div>
   </div>

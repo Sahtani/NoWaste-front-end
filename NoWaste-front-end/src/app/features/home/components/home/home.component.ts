@@ -5,7 +5,6 @@ import {Router} from '@angular/router';
 import {HeaderComponent} from '../../../../layout/header/header.component';
 import {LoginComponent} from '../../../auth/login/login.component';
 import {RegisterComponent} from '../../../auth/register/register.component';
-import {Roles, User} from '../../../../core/models/user/user.model';
 import {AuthenticationResponse} from '../../../../core/models/authentication-response';
 
 @Component({
@@ -54,11 +53,7 @@ export class HomeComponent {
       this.router.navigate(['/announcements']);
       return;
     }
-
-    // Navigation basée sur le rôle
-    // Vérifier le rôle et rediriger en conséquence
     if (Array.isArray(response.role)) {
-      // Si role est un tableau
       if (response.role.includes('DONOR')) {
         this.router.navigate(['/announcements']);
       } else if (response.role.includes('BENEFICIARY')) {
@@ -69,7 +64,6 @@ export class HomeComponent {
         this.router.navigate(['/announcements']);
       }
     } else {
-      // Si role est une valeur unique (string)
       if (response.role === 'DONOR') {
         this.router.navigate(['/announcements']);
       } else if (response.role === 'BENEFICIARY') {
@@ -82,10 +76,8 @@ export class HomeComponent {
     }
   }
   handleSignupSuccess(response: any): void {
-    // Maybe show a success message or something else
     console.log('Signup successful', response);
 
-    // You might want to automatically switch to login modal after a delay
     setTimeout(() => {
       this.switchToLogin();
     }, 3000);

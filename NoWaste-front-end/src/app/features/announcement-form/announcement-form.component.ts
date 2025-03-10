@@ -105,23 +105,18 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
   }
 
   populateFormWithAnnouncement(): void {
-    // Reset form and recreate product form groups
     this.resetForm();
 
-    // Remove the default empty product
     while (this.productsArray.length > 0) {
       this.productsArray.removeAt(0);
     }
 
     if (!this.editingAnnouncement) return;
 
-    // Set announcement data
     this.announcementForm.patchValue({
       createdAt: this.formatDateForInput(this.editingAnnouncement.createdAt),
       postedDate: this.editingAnnouncement.postedDate
     });
-
-    // Add product form groups and set values
     this.editingAnnouncement.produits.forEach((product, index) => {
       this.productsArray.push(this.createProductFormGroup());
       this.productsArray.at(index).patchValue({
@@ -137,7 +132,6 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
         status: product.status
       });
 
-      // Set image preview
       this.imagePreview[index] = product.image;
     });
   }
@@ -159,7 +153,6 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
       return;
     }
 
-    // Préparer les données de l'annonce
     const products: Product[] = this.productsArray.controls.map((control, index) => {
       const formGroup = control as FormGroup;
       return {

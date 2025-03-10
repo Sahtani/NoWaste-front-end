@@ -1,10 +1,10 @@
 import {inject, Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
+import {environment} from '../../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {catchError, Observable, tap} from 'rxjs';
 import {Router} from '@angular/router';
-import {User} from '../models/user/user.model';
-import {AuthenticationResponse} from '../models/authentication-response';
+import {User} from '../../models/user/user.model';
+import {AuthenticationResponse} from '../../models/authentication-response';
 
 @Injectable({
   providedIn: 'root'
@@ -33,17 +33,13 @@ export class AuthService {
 
           try {
             if (response && response.token) {
-              console.log('[AuthService] Found access_token in response');
 
               localStorage.setItem('auth_token', response.token);
-              console.log('[AuthService] Stored auth_token in localStorage');
-
               const expirationDate = new Date(new Date().getTime() + this.tokenExpirationTime);
               localStorage.setItem('expirationDate', expirationDate.toISOString());
               console.log('[AuthService] Set expiration date:', expirationDate);
 
               let userInfo: any = {};
-
             //  userInfo.name = response.name;
 
               userInfo.email = response.email;
@@ -130,27 +126,27 @@ export class AuthService {
     }
   }
 
-  hasRequiredRole(roles: string[]): boolean {
-    console.log('[AuthService] Checking for required roles:', roles);
+  /* hasRequiredRole(roles: string[]): boolean {
+     console.log('[AuthService] Checking for required roles:', roles);
 
-    const currentUser = this.getCurrentUser();
-    console.log('[AuthService] Current user for role check:', currentUser);
+     const currentUser = this.getCurrentUser();
+     console.log('[AuthService] Current user for role check:', currentUser);
 
-    if (!currentUser || !currentUser.role) {
-      console.log('[AuthService] No current user found or no role property');
-      return false;
-    }
+     if (!currentUser || !currentUser.role) {
+       console.log('[AuthService] No current user found or no role property');
+       return false;
+     }
 
-    const userRoles = currentUser.role.map(r => r.toString().toLowerCase());
+     const userRoles = currentUser.role.map(r => r.toString().toLowerCase());
 
-    const normalizedRequiredRoles = roles.map(r => r.toLowerCase());
+     const normalizedRequiredRoles = roles.map(r => r.toLowerCase());
 
-    console.log('[AuthService] User roles (normalized):', userRoles);
-    console.log('[AuthService] Required roles (normalized):', normalizedRequiredRoles);
+     console.log('[AuthService] User roles (normalized):', userRoles);
+     console.log('[AuthService] Required roles (normalized):', normalizedRequiredRoles);
 
-    const hasRole = userRoles.some(role => normalizedRequiredRoles.includes(role));
-    console.log('[AuthService] User has required role:', hasRole);
+     const hasRole = userRoles.some(role => normalizedRequiredRoles.includes(role));
+     console.log('[AuthService] User has required role:', hasRole);
 
-    return hasRole;
-  }
+     return hasRole;
+   }*/
 }

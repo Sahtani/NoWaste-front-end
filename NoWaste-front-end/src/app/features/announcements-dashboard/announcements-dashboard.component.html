@@ -6,8 +6,9 @@
         <h1 class="text-2xl font-bold text-[#264653]">Announcements Dashboard</h1>
         <button (click)="openAddAnnouncementModal()"
                 class="flex items-center gap-2 bg-[#2A9D8F] hover:bg-[#238779] text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4.5v15m7.5-7.5h-15" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           New Announcement
         </button>
@@ -15,35 +16,36 @@
     </div>
   </header>
 
-  <!-- Dashboard Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Filters and Search -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
       <div class="relative flex items-center w-full sm:w-96">
         <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-400">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" stroke-linecap="round"
+                  stroke-linejoin="round"/>
           </svg>
         </span>
         <input
-          [(ngModel)]="searchQuery"
           (input)="applyFilters()"
-          placeholder="Search announcements..."
+          [(ngModel)]="searchQuery"
           class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2A9D8F] focus:border-[#2A9D8F] transition-colors"
+          placeholder="Search announcements..."
         >
       </div>
       <div class="flex gap-2">
         <select
-          [(ngModel)]="filterStatus"
           (change)="applyFilters()"
+          [(ngModel)]="filterStatus"
           class="block border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#2A9D8F] focus:border-[#2A9D8F] transition-colors"
         >
           <option value="all">All Status</option>
           <option *ngFor="let status of productStatuses" [value]="status">{{ status }}</option>
         </select>
         <select
-          [(ngModel)]="sortBy"
           (change)="applyFilters()"
+          [(ngModel)]="sortBy"
           class="block border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#2A9D8F] focus:border-[#2A9D8F] transition-colors"
         >
           <option value="newest">Newest First</option>
@@ -64,34 +66,39 @@
       <!-- Empty State -->
       <div *ngIf="!isLoading && filteredAnnouncements.length === 0"
            class="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col items-center py-12">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 text-gray-400 mb-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
+        <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+             xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" stroke-linecap="round"
+                stroke-linejoin="round"/>
         </svg>
         <h3 class="text-lg font-medium text-gray-700">No announcements found</h3>
         <p class="text-gray-500 mt-2">Try changing your search or filter criteria</p>
         <button (click)="openAddAnnouncementModal()"
                 class="mt-4 flex items-center gap-2 bg-[#2A9D8F] hover:bg-[#238779] text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-all duration-300">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4.5v15m7.5-7.5h-15" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           Create New Announcement
         </button>
       </div>
 
       <!-- Announcement Cards -->
-      <div *ngFor="let announcement of filteredAnnouncements | slice:(currentPage-1)*pageSize:currentPage*pageSize; let i = index"
-           class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
+      <div
+        *ngFor="let announcement of filteredAnnouncements | slice:(currentPage-1)*pageSize:currentPage*pageSize; let i = index"
+        class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
         <!-- Card Status Badge -->
         <div class="relative">
           <!-- Use an image from the first product if available -->
           <div class="h-48 w-full bg-gray-200 flex items-center justify-center overflow-hidden">
-           <!-- *ngIf="announcement.produits[0]?.image"-->
-            <img  [src]="announcement.produits[0].image"
+            <!-- *ngIf="announcement.produits[0]?.image"-->
+            <img  src="../../../../../../public/assets/images/character-1.svg"
                  alt="Product image" class="h-full w-full object-cover">
-            <svg *ngIf="!announcement.produits[0]?.image" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                 stroke-width="1" stroke="currentColor" class="w-16 h-16 text-gray-400">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            <svg *ngIf="!announcement?.produits?.[0]?.image" class="w-16 h-16 text-gray-400" fill="none"
+                 stroke="currentColor"
+                 stroke-width="1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" stroke-linecap="round"
+                    stroke-linejoin="round"/>
             </svg>
           </div>
 
@@ -107,31 +114,36 @@
                   class="text-xs font-medium px-2.5 py-0.5 rounded">
               {{ product.status }}
             </span>
-            <span *ngIf="announcement.produits.length > 2"
+          <!--  <span *ngIf="announcement?.produits?.length > 2"
                   class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">
-              +{{ announcement.produits.length - 2 }} more
-            </span>
+  +{{ announcement?.produits?.length - 2 }} more
+</span>-->
           </div>
         </div>
 
         <!-- Card Content -->
         <div class="p-5">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg font-semibold text-[#264653] mb-2">{{ announcement.produits[0]?.name || 'Untitled Announcement' }}</h3>
+          <!--  <h3
+              class="text-lg font-semibold text-[#264653] mb-2">{{ announcement?.produits[0]?.name || 'Untitled Announcement' }}</h3>
+        -->
             <div class="flex gap-1">
               <!-- Edit Button -->
               <button (click)="openEditAnnouncementModal(announcement)"
                       class="p-1.5 rounded-full text-gray-500 hover:bg-gray-100 hover:text-[#2A9D8F] transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5"
+                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" stroke-linecap="round"
+                        stroke-linejoin="round"/>
                 </svg>
               </button>
               <!-- Delete Button -->
               <button (click)="confirmDelete(announcement)"
                       class="p-1.5 rounded-full text-gray-500 hover:bg-gray-100 hover:text-red-500 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-
-"></path>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5"
+                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-
+" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </button>
             </div>
@@ -140,4 +152,17 @@
       </div>
     </div>
   </main>
+</div>
+<!-- Modal overlay -->
+<div *ngIf="showAnnouncementModal"
+     class="fixed inset-0  bg-black/50 backdrop-blur-sm bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-auto">
+  <div class="max-w-4xl w-full max-h-[90vh] overflow-auto">
+    <!-- Utilisation du composant de formulaire -->
+    <app-announcement-form
+      [editingAnnouncement]="editingAnnouncement"
+      [isSaving]="isSaving"
+      (save)="saveAnnouncement($event)"
+      (cancel)="closeAnnouncementModal()">
+    </app-announcement-form>
+  </div>
 </div>
