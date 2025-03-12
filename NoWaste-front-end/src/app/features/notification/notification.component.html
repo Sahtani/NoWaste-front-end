@@ -1,0 +1,16 @@
+<div class="fixed top-5 right-5 z-50 max-w-md">
+  <div *ngFor="let notification of notifications"
+       [@notificationAnimation]
+       [ngClass]="getNotificationClasses(notification)"
+       class="max-w-md">
+    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path [attr.d]="getIcon(notification.type)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+    </svg>
+    <div class="flex-grow text-red">{{ notification.message }}</div>
+    <button (click)="dismiss(notification.id)" class="ml-2 text-gray-500 hover:text-gray-800 focus:outline-none">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+    </button>
+  </div>
+</div>

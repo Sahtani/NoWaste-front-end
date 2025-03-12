@@ -9,6 +9,8 @@ import {AnnouncementStatus} from '../../core/enum/AnnouncementStatus';
 import {AuthService} from '../../core/services/authentication/auth.service';
 import {Router} from '@angular/router';
 import {HeaderComponent} from '../../layout/header/header.component';
+import {NotificationService} from '../../core/services/notification/notification.service';
+import {NotificationComponent} from '../notification/notification.component';
 
 @Component({
   selector: 'app-announcements-dashboard',
@@ -22,7 +24,8 @@ import {HeaderComponent} from '../../layout/header/header.component';
     AnnouncementFormComponent,
     DatePipe,
     CurrencyPipe,
-    HeaderComponent
+    HeaderComponent,
+    NotificationComponent
   ],
   providers: [DatePipe],
   styleUrls: ['./announcements-dashboard.component.css']
@@ -63,11 +66,9 @@ export class AnnouncementsDashboardComponent implements OnInit {
     private announcementService: AnnouncementService,
     private authService: AuthService,
     private datePipe: DatePipe,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) { }
-
-
-
 
   handleLogin(): void {
     this.showLoginModal = true;
@@ -80,9 +81,8 @@ export class AnnouncementsDashboardComponent implements OnInit {
   handleLogout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+    this.notificationService.info('Vous avez été déconnecté avec succès');
   }
-
-
 
   ngOnInit(): void {
     this.currentUserId = this.authService.getCurrentUser()?.id;
@@ -95,6 +95,10 @@ export class AnnouncementsDashboardComponent implements OnInit {
       next: (data) => {
         console.log('Données reçues de l\'API:', data);
         this.announcements = data.filter(a => a.status === AnnouncementStatus.PENDING);
+        // Charger les annonces de l'utilisateur actuel
+        if (this.currentUserId) {
+          this.myAnnouncements = data.filter(a => a.userId === this.currentUserId);
+        }
         console.log('Annonces filtrées:', this.announcements);
         this.applyFilters();
         this.calculateTotalPages();
@@ -103,6 +107,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
       error: (error) => {
         console.error('Error loading announcements', error);
         this.isLoading = false;
+        this.notificationService.error('Erreur lors du chargement des annonces');
       }
     });
   }
@@ -159,6 +164,11 @@ export class AnnouncementsDashboardComponent implements OnInit {
 
   // Modal Functions
   openAddAnnouncementModal(): void {
+    if (!this.authService.isAuthenticated()) {
+      this.notificationService.warning('Veuillez vous connecter pour créer une annonce');
+      this.showLoginModal = true;
+      return;
+    }
     this.editingAnnouncement = null;
     this.showAnnouncementModal = true;
   }
@@ -168,7 +178,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
       this.editingAnnouncement = announcement;
       this.showAnnouncementModal = true;
     } else {
-      alert("Vous ne pouvez modifier que vos propres annonces.");
+      this.notificationService.warning('Vous ne pouvez modifier que vos propres annonces');
     }
   }
 
@@ -183,7 +193,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
       this.announcementToDelete = announcement;
       this.showDeleteModal = true;
     } else {
-      alert("Vous ne pouvez supprimer que vos propres annonces.");
+      this.notificationService.warning('Vous ne pouvez supprimer que vos propres annonces');
     }
   }
 
@@ -236,7 +246,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
           }
         });
       } else {
-        alert("Vous ne pouvez mettre à jour que vos propres annonces.");
+        this.notificationService.error('Vous ne pouvez mettre à jour que vos propres annonces');
         this.isSaving = false;
       }
     } else {
@@ -268,16 +278,16 @@ export class AnnouncementsDashboardComponent implements OnInit {
           this.showDeleteModal = false;
           this.announcementToDelete = null;
           this.isDeleting = false;
-          alert('Annonce supprimée avec succès');
+          this.notificationService.success('Annonce supprimée avec succès');
         },
         error: (error) => {
           console.error('Erreur lors de la suppression de l\'annonce', error);
           this.isDeleting = false;
-          alert('Erreur lors de la suppression de l\'annonce');
+          this.notificationService.error('Erreur lors de la suppression de l\'annonce');
         }
       });
     } else {
-      alert("Vous ne pouvez supprimer que vos propres annonces.");
+      this.notificationService.error('Vous ne pouvez supprimer que vos propres annonces');
       this.showDeleteModal = false;
       this.announcementToDelete = null;
     }
@@ -289,10 +299,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
       if (index !== -1) {
         this.announcements[index] = announcement;
       }
-      this.showAddSuccessToast = true;
-      setTimeout(() => {
-        this.showAddSuccessToast = false;
-      }, 5000);
+
       const myIndex = this.myAnnouncements.findIndex(a => a.id === announcement.id);
       if (myIndex !== -1) {
         this.myAnnouncements[myIndex] = announcement;
@@ -311,13 +318,14 @@ export class AnnouncementsDashboardComponent implements OnInit {
     this.closeAnnouncementModal();
     this.isSaving = false;
 
-    alert(message);
+    // Afficher la notification de succès
+    this.notificationService.success(message);
   }
 
   private handleSaveError(error: any): void {
     console.error('Erreur lors de l\'enregistrement de l\'annonce', error);
     this.isSaving = false;
-    alert('Erreur lors de l\'enregistrement de l\'annonce');
+    this.notificationService.error('Erreur lors de l\'enregistrement de l\'annonce');
   }
 
   calculateTotalPages(): void {

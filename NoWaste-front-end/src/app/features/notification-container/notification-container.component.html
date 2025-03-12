@@ -1,0 +1,7 @@
+<div class="fixed bottom-5 right-5 flex flex-col gap-4 z-50">
+  <app-notification
+    *ngFor="let notification of notifications"
+    [data]="notification"
+    (close)="removeNotification(notification)">
+  </app-notification>
+</div>

@@ -12,6 +12,7 @@ import {NgForOf, NgIf} from '@angular/common';
     NgIf,
     NgForOf
   ],
+  standalone: true,
   styleUrls: ['./announcement-form.component.css']
 })
 export class AnnouncementFormComponent implements OnInit, OnChanges {
