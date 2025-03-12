@@ -6,6 +6,7 @@ import {HeaderComponent} from '../../../../layout/header/header.component';
 import {LoginComponent} from '../../../auth/login/login.component';
 import {RegisterComponent} from '../../../auth/register/register.component';
 import {AuthenticationResponse} from '../../../../core/models/authentication-response';
+import {AuthService} from '../../../../core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -19,21 +20,21 @@ export class HomeComponent {
   showLogin = signal(false);
   showSignup = signal(false);
 
-  showLoginModal(): void {
-    this.showLogin.set(true);
-    this.showSignup.set(false);
-  }
+  constructor(
+    private authService: AuthService,
+  ) {}
 
-  showSignupModal(): void {
-    this.showSignup.set(true);
-    this.showLogin.set(false);
-  }
   hideLoginModal(): void {
     this.showLogin.set(false);
   }
 
   hideSignupModal(): void {
     this.showSignup.set(false);
+  }
+
+  handleLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 
   switchToSignup(): void {

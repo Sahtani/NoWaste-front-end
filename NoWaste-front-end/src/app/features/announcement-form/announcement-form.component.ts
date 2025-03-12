@@ -15,7 +15,7 @@ import {NgForOf, NgIf} from '@angular/common';
   styleUrls: ['./announcement-form.component.css']
 })
 export class AnnouncementFormComponent implements OnInit, OnChanges {
-  @Input() editingAnnouncement: Announcement | null = null;
+  @Input() editingAnnouncement: Announcement | null = null ;
   @Input() isSaving = false;
   @Output() save = new EventEmitter<Announcement>();
   @Output() cancel = new EventEmitter<void>();
@@ -34,6 +34,7 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
     private fb: FormBuilder
   ) {
     this.initForm();
+
   }
 
   ngOnInit(): void {
@@ -51,8 +52,8 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
   initForm(): void {
     this.announcementForm = this.fb.group({
       title: ['', Validators.required],
-      createdAt: [new Date().toISOString().split('T')[0], Validators.required],
-      postedDate: [new Date().toISOString(), Validators.required],
+      createdAt: [new Date().toISOString().split('T')[0]],
+    //  postedDate: [new Date().toISOString(), Validators.required],
       products: this.fb.array([this.createProductFormGroup()])
     });
   }
@@ -95,7 +96,6 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
     if (input.files && input.files.length > 0) {
       this.selectedFiles[index] = input.files[0];
 
-      // Create preview
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview[index] = reader.result as string;
@@ -114,8 +114,8 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
     if (!this.editingAnnouncement) return;
 
     this.announcementForm.patchValue({
-      createdAt: this.formatDateForInput(this.editingAnnouncement.createdAt),
-      postedDate: this.editingAnnouncement.postedDate
+      createdAt: this.editingAnnouncement.createdAt,
+     // postedDate: this.editingAnnouncement.postedDate
     });
     this.editingAnnouncement.produits.forEach((product, index) => {
       this.productsArray.push(this.createProductFormGroup());
@@ -173,10 +173,9 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
     const announcementData: Announcement = {
       id: this.editingAnnouncement?.id,
       title: this.announcementForm.get('title')?.value,
-      createdAt: this.announcementForm.get('createdAt')?.value,
-      postedDate: this.announcementForm.get('postedDate')?.value,
-      produits: products,
-      userId: 1
+     // createdAt: this.announcementForm.get('createdAt')?.value,
+    //  postedDate: this.announcementForm.get('postedDate')?.value,
+      produits: products
     };
     this.save.emit(announcementData);
   }

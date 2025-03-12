@@ -4,9 +4,9 @@ import {AnnouncementStatus} from '../../enum/AnnouncementStatus';
 export interface Announcement {
   id?: number;
   title: string;
-  createdAt: string;
-  postedDate?: string;
-  status: AnnouncementStatus;
+  createdAt?: Date;
+  postedDate?: Date;
+  status?: AnnouncementStatus;
   rejectionReason?: string;
   produits: Product[];
   userId?: number;

@@ -1,10 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {AnnouncementService} from '../../core/services/announcement/announcement.service';
-import {DatePipe, NgClass, NgForOf, NgIf, SlicePipe} from '@angular/common';
+import {CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf, SlicePipe} from '@angular/common';
 import {Announcement} from '../../core/models/announcement/announcement.model';
 import {ProductStatus} from '../../core/models/product.model';
 import {FormsModule} from '@angular/forms';
 import {AnnouncementFormComponent} from '../announcement-form/announcement-form.component';
+import {AnnouncementStatus} from '../../core/enum/AnnouncementStatus';
+import {AuthService} from '../../core/services/authentication/auth.service';
+import {Router} from '@angular/router';
+import {HeaderComponent} from '../../layout/header/header.component';
 
 @Component({
   selector: 'app-announcements-dashboard',
@@ -15,7 +19,10 @@ import {AnnouncementFormComponent} from '../announcement-form/announcement-form.
     NgIf,
     NgClass,
     SlicePipe,
-    AnnouncementFormComponent
+    AnnouncementFormComponent,
+    DatePipe,
+    CurrencyPipe,
+    HeaderComponent
   ],
   providers: [DatePipe],
   styleUrls: ['./announcements-dashboard.component.css']
@@ -30,10 +37,11 @@ export class AnnouncementsDashboardComponent implements OnInit {
 
   // Data state
   announcements: Announcement[] = [];
+  myAnnouncements: Announcement[] = [];
   filteredAnnouncements: Announcement[] = [];
   editingAnnouncement: Announcement | null = null;
   announcementToDelete: Announcement | null = null;
-
+  showAddSuccessToast = false;
   // Pagination state
   currentPage = 1;
   pageSize = 9;
@@ -43,22 +51,51 @@ export class AnnouncementsDashboardComponent implements OnInit {
   searchQuery = '';
   filterStatus = 'all';
   sortBy = 'newest';
+  showOnlyMine = false;
 
   productStatuses = Object.values(ProductStatus);
+  currentUserId?: number | null = null;
+
+  showLoginModal = false;
+  showSignupModal = false;
 
   constructor(
     private announcementService: AnnouncementService,
-    private datePipe: DatePipe
+    private authService: AuthService,
+    private datePipe: DatePipe,
+    private router: Router
   ) { }
 
+
+
+
+  handleLogin(): void {
+    this.showLoginModal = true;
+  }
+
+  handleSignup(): void {
+    this.showSignupModal = true;
+  }
+
+  handleLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
+
+
+
   ngOnInit(): void {
+    this.currentUserId = this.authService.getCurrentUser()?.id;
     this.loadAnnouncements();
   }
+
   loadAnnouncements(): void {
     this.isLoading = true;
     this.announcementService.getAnnouncements().subscribe({
       next: (data) => {
-        this.announcements = data;
+        console.log('Données reçues de l\'API:', data);
+        this.announcements = data.filter(a => a.status === AnnouncementStatus.PENDING);
+        console.log('Annonces filtrées:', this.announcements);
         this.applyFilters();
         this.calculateTotalPages();
         this.isLoading = false;
@@ -69,41 +106,55 @@ export class AnnouncementsDashboardComponent implements OnInit {
       }
     });
   }
+
   applyFilters(): void {
-    let filtered = [...this.announcements];
+    let filtered = this.showOnlyMine ? [...this.myAnnouncements] : [...this.announcements];
 
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(a =>
-        a.produits.some(p =>
-          p.name.toLowerCase().includes(query) ||
-          p.description.toLowerCase().includes(query) ||
-          p.location.toLowerCase().includes(query)
-        )
+          a.produits && a.produits.some(p =>
+            p.name?.toLowerCase().includes(query) ||
+            p.description?.toLowerCase().includes(query) ||
+            p.location?.toLowerCase().includes(query)
+          )
       );
     }
 
     if (this.filterStatus !== 'all') {
       filtered = filtered.filter(a =>
-        a.produits.some(p => p.status === this.filterStatus)
+        a.produits && a.produits.some(p => p.status === this.filterStatus)
       );
     }
 
     switch (this.sortBy) {
       case 'newest':
-        filtered.sort((a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime());
+        filtered.sort((a, b) => new Date(b.postedDate || '').getTime() - new Date(a.postedDate || '').getTime());
         break;
       case 'oldest':
-        filtered.sort((a, b) => new Date(a.postedDate).getTime() - new Date(b.postedDate).getTime());
+        filtered.sort((a, b) => new Date(a.postedDate || '').getTime() - new Date(b.postedDate || '').getTime());
         break;
       case 'title':
-        filtered.sort((a, b) => a.produits[0].name.localeCompare(b.produits[0].name));
+        filtered.sort((a, b) => {
+          const nameA = a.produits && a.produits[0] ? a.produits[0].name : '';
+          const nameB = b.produits && b.produits[0] ? b.produits[0].name : '';
+          return nameA.localeCompare(nameB);
+        });
         break;
     }
 
     this.filteredAnnouncements = filtered;
     this.calculateTotalPages();
     this.goToPage(1);
+  }
+
+  toggleMyAnnouncements(): void {
+    this.showOnlyMine = !this.showOnlyMine;
+    this.applyFilters();
+  }
+
+  isOwner(announcement: Announcement): boolean {
+    return this.currentUserId === announcement.userId;
   }
 
   // Modal Functions
@@ -113,17 +164,27 @@ export class AnnouncementsDashboardComponent implements OnInit {
   }
 
   openEditAnnouncementModal(announcement: Announcement): void {
-    this.editingAnnouncement = announcement;
-    this.showAnnouncementModal = true;
+    if (this.isOwner(announcement)) {
+      this.editingAnnouncement = announcement;
+      this.showAnnouncementModal = true;
+    } else {
+      alert("Vous ne pouvez modifier que vos propres annonces.");
+    }
   }
 
   closeAnnouncementModal(): void {
     this.showAnnouncementModal = false;
     this.editingAnnouncement = null;
   }
+
   confirmDelete(announcement: Announcement): void {
-    this.announcementToDelete = announcement;
-    this.showDeleteModal = true;
+    // Vérifier si l'utilisateur est le propriétaire avant de permettre la suppression
+    if (this.isOwner(announcement)) {
+      this.announcementToDelete = announcement;
+      this.showDeleteModal = true;
+    } else {
+      alert("Vous ne pouvez supprimer que vos propres annonces.");
+    }
   }
 
   cancelDelete(): void {
@@ -132,7 +193,6 @@ export class AnnouncementsDashboardComponent implements OnInit {
   }
 
   // CRUD Operations
-
   saveAnnouncement(announcementData: Announcement): void {
     this.isSaving = true;
 
@@ -153,7 +213,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
         quantity: p.quantity,
         expirationDate: formatDate(p.expirationDate),
         location: p.location,
-        image: p.image || "https://exemple.com/images/default.jpg",
+        image: (p.image || "").substring(0, 254) || "https://exemple.com/images/default.jpg",
         status: p.status || "AVAILABLE",
         announcementId: announcementData.id || null
       }))
@@ -162,22 +222,27 @@ export class AnnouncementsDashboardComponent implements OnInit {
     console.log('Payload envoyé:', payload);
 
     if (announcementData.id) {
-      this.announcementService.updateAnnouncement(announcementData.id, payload).subscribe({
-        next: (updatedAnnouncement) => {
-          this.handleSuccessfulSave(updatedAnnouncement, 'Annonce mise à jour avec succès');
-        },
-        error: (error) => {
-          console.error('Détails de l\'erreur:', error);
-          this.handleSaveError(error);
-        },
-        complete: () => {
-          this.isSaving = false;
-        }
-      });
+      if (this.isOwner(announcementData)) {
+        this.announcementService.updateAnnouncement(announcementData.id, payload).subscribe({
+          next: (updatedAnnouncement) => {
+            this.handleSuccessfulSave(updatedAnnouncement, 'Annonce mise à jour avec succès');
+          },
+          error: (error) => {
+            console.error('Détails de l\'erreur:', error);
+            this.handleSaveError(error);
+          },
+          complete: () => {
+            this.isSaving = false;
+          }
+        });
+      } else {
+        alert("Vous ne pouvez mettre à jour que vos propres annonces.");
+        this.isSaving = false;
+      }
     } else {
       this.announcementService.createAnnouncement(payload).subscribe({
         next: (newAnnouncement) => {
-          this.handleSuccessfulSave(newAnnouncement, 'Annonce créée avec succès');
+          this.handleSuccessfulSave(newAnnouncement, 'Annonce créée avec succès. Elle sera visible après approbation par un administrateur.');
         },
         error: (error) => {
           console.error('Détails de l\'erreur:', error);
@@ -190,26 +255,32 @@ export class AnnouncementsDashboardComponent implements OnInit {
     }
   }
 
-
   deleteAnnouncement(): void {
     if (!this.announcementToDelete) return;
 
-    this.isDeleting = true;
-    this.announcementService.deleteAnnouncement(this.announcementToDelete.id!).subscribe({
-      next: () => {
-        this.announcements = this.announcements.filter(a => a.id !== this.announcementToDelete?.id);
-        this.applyFilters();
-        this.showDeleteModal = false;
-        this.announcementToDelete = null;
-        this.isDeleting = false;
-        alert('Annonce supprimée avec succès');
-      },
-      error: (error) => {
-        console.error('Erreur lors de la suppression de l\'annonce', error);
-        this.isDeleting = false;
-        alert('Erreur lors de la suppression de l\'annonce');
-      }
-    });
+    if (this.isOwner(this.announcementToDelete)) {
+      this.isDeleting = true;
+      this.announcementService.deleteAnnouncement(this.announcementToDelete.id!).subscribe({
+        next: () => {
+          this.announcements = this.announcements.filter(a => a.id !== this.announcementToDelete?.id);
+          this.myAnnouncements = this.myAnnouncements.filter(a => a.id !== this.announcementToDelete?.id);
+          this.applyFilters();
+          this.showDeleteModal = false;
+          this.announcementToDelete = null;
+          this.isDeleting = false;
+          alert('Annonce supprimée avec succès');
+        },
+        error: (error) => {
+          console.error('Erreur lors de la suppression de l\'annonce', error);
+          this.isDeleting = false;
+          alert('Erreur lors de la suppression de l\'annonce');
+        }
+      });
+    } else {
+      alert("Vous ne pouvez supprimer que vos propres annonces.");
+      this.showDeleteModal = false;
+      this.announcementToDelete = null;
+    }
   }
 
   private handleSuccessfulSave(announcement: Announcement, message: string): void {
@@ -218,8 +289,22 @@ export class AnnouncementsDashboardComponent implements OnInit {
       if (index !== -1) {
         this.announcements[index] = announcement;
       }
+      this.showAddSuccessToast = true;
+      setTimeout(() => {
+        this.showAddSuccessToast = false;
+      }, 5000);
+      const myIndex = this.myAnnouncements.findIndex(a => a.id === announcement.id);
+      if (myIndex !== -1) {
+        this.myAnnouncements[myIndex] = announcement;
+      } else {
+        this.myAnnouncements.unshift(announcement);
+      }
     } else {
-      this.announcements.unshift(announcement);
+      this.myAnnouncements.unshift(announcement);
+
+      if (announcement.status === AnnouncementStatus.APPROVED) {
+        this.announcements.unshift(announcement);
+      }
     }
 
     this.applyFilters();

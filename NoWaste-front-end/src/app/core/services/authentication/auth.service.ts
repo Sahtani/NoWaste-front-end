@@ -15,8 +15,6 @@ export class AuthService {
   private tokenExpirationTime = 24 * 60 * 60 * 1000;
 
   constructor(private http: HttpClient) {
-    console.log('[AuthService] Current localStorage auth_token:', localStorage.getItem('auth_token'));
-    console.log('[AuthService] Current localStorage user_info:', localStorage.getItem('user_info'));
   }
 
   register(userData: any): Observable<any> {
@@ -66,12 +64,11 @@ export class AuthService {
   }
 
   logout(): void {
-    console.log('[AuthService] Logging out user');
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_info');
     localStorage.removeItem('expirationDate');
     console.log('[AuthService] Items removed from localStorage');
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['']);
   }
 
   isAuthenticated(): boolean {
@@ -100,10 +97,9 @@ export class AuthService {
   }
 
   getCurrentUser(): User | null {
-    console.log('[AuthService] Getting current user');
 
     if (!this.isAuthenticated()) {
-      console.log('[AuthService] User is not authenticated');
+      console.log('User is not authenticated');
       return null;
     }
 
@@ -111,7 +107,7 @@ export class AuthService {
     console.log('[AuthService] Retrieved user_info from localStorage:', userData);
 
     if (!userData) {
-      console.log('[AuthService] No user_info found in localStorage');
+      console.log('No user_info found in localStorage');
       return null;
     }
 
@@ -126,27 +122,4 @@ export class AuthService {
     }
   }
 
-  /* hasRequiredRole(roles: string[]): boolean {
-     console.log('[AuthService] Checking for required roles:', roles);
-
-     const currentUser = this.getCurrentUser();
-     console.log('[AuthService] Current user for role check:', currentUser);
-
-     if (!currentUser || !currentUser.role) {
-       console.log('[AuthService] No current user found or no role property');
-       return false;
-     }
-
-     const userRoles = currentUser.role.map(r => r.toString().toLowerCase());
-
-     const normalizedRequiredRoles = roles.map(r => r.toLowerCase());
-
-     console.log('[AuthService] User roles (normalized):', userRoles);
-     console.log('[AuthService] Required roles (normalized):', normalizedRequiredRoles);
-
-     const hasRole = userRoles.some(role => normalizedRequiredRoles.includes(role));
-     console.log('[AuthService] User has required role:', hasRole);
-
-     return hasRole;
-   }*/
 }

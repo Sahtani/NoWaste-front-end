@@ -20,8 +20,15 @@
         <a href="#about" class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">About Us</a>
       </nav>
       <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mr-8">
-        <button (click)="loginClick()" class="border border-[#2A9D8F] text-[#2A9D8F] hover:bg-[#2A9D8F]/5 px-4 py-2 rounded-lg font-medium transition-colors">Login</button>
-        <button (click)="signupClick()" class="bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white px-4 py-2 rounded-lg font-medium shadow-[0_4px_6px_rgba(0,0,0,0.07)] transition-colors">Get Started</button>
+        <ng-container *ngIf="!authService.isAuthenticated()">
+          <button (click)="login()" class="border border-[#2A9D8F] text-[#2A9D8F] hover:bg-[#2A9D8F]/5 px-4 py-2 rounded-lg font-medium transition-colors">Login</button>
+          <button (click)="signup()" class="bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white px-4 py-2 rounded-lg font-medium shadow-[0_4px_6px_rgba(0,0,0,0.07)] transition-colors">Get Started</button>
+        </ng-container>
+        <ng-container *ngIf="authService.isAuthenticated()">
+          <button (click)="logout()" class="px-4 py-2 text-white bg-[#E76F51] hover:bg-[#E76F51]/90 rounded-lg">
+            Logout
+          </button>
+        </ng-container>
       </div>
     </div>
   </div>

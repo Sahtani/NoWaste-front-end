@@ -1,7 +1,8 @@
 <div class="min-h-screen bg-gray-50">
   <app-header
     (onLogin)="showLogin.set(true)"
-    (onSignup)="showSignup.set(true)">
+    (onSignup)="showSignup.set(true)"
+    (onLogout)="handleLogout()">
   </app-header>
 
   <section class="relative pt-16 pb-8 overflow-hidden bg-gradient-to-br from-white via-[#F2F9F9] to-[#E8F4F2]">
