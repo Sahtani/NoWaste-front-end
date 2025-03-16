@@ -4,8 +4,8 @@ import { finalize } from 'rxjs/operators';
 import {CurrencyPipe, DatePipe, Location, NgClass, NgForOf, NgIf} from '@angular/common';
 import {AnnouncementService} from '../../core/services/announcement/announcement.service';
 import {Announcement} from '../../core/models/announcement/announcement.model';
-import {AnnouncementDetails} from '../../core/models/announcement-details.model';
 import {AuthService} from '../../core/services/authentication/auth.service';
+import {AnnouncementDetails} from '../../core/models/announcement-details.model';
 
 @Component({
   selector: 'app-announcement-details',

@@ -257,7 +257,6 @@ export class AnnouncementsDashboardComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  // Navigation vers la page de détails
   viewAnnouncementDetails(announcement: Announcement): void {
     this.router.navigate(['/announcements', announcement.id]);
   }

@@ -37,7 +37,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-4 gap-2 mt-4" *ngIf="announcement?.produits?.length > 1">
+      <div class="grid grid-cols-4 gap-2 mt-4" *ngIf="announcement?.produits!.length > 1">
         <div *ngFor="let product of announcement.produits.slice(1, 5)"
              class="h-20 rounded-md overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
           <img [src]="product.image" alt="Additional product image" class="w-full h-full object-cover">
@@ -90,11 +90,11 @@
           <span>{{ announcement.produits[0]?.quantity || 1 }}  available</span>
         </div>
 
-        <div *ngIf="announcement.produits[0]?.expiryDate" class="flex items-center text-[#264653]/70">
+        <div *ngIf="announcement.produits[0]?.expirationDate" class="flex items-center text-[#264653]/70">
           <svg class="w-5 h-5 mr-2 text-[#E76F51]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span>Expires on {{ announcement.produits[0]?.expiryDate | date }}</span>
+          <span>Expires on {{ announcement.produits[0]?.expirationDate | date }}</span>
         </div>
       </div>
 

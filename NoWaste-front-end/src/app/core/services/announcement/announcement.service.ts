@@ -20,8 +20,8 @@ export class AnnouncementService {
       map(response => response.content)
     );}
 
-  getAnnouncementById(id: number): Observable<Announcement> {
-    return this.http.get<Announcement>(`${this.apiUrl}/${id}`);
+  getAnnouncementById(id: string): Observable<Announcement> {
+    return this.http.get<Announcement>(`${this.apiUrl}${id}`);
   }
 
   createAnnouncement(announcement: any): Observable<Announcement> {
