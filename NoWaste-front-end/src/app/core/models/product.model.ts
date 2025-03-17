@@ -17,5 +17,5 @@ export interface Product {
   location: string;
   image: string;
   status: ProductStatus;
-  announcementId?: number;
+  announcementId?: string;
 }

@@ -45,13 +45,11 @@ export class AnnouncementsDashboardComponent implements OnInit {
   showAnnouncementModal: boolean = false;
   showDeleteModal: boolean = false;
 
-  // Variables d'état
   isLoading: boolean = false;
   isSaving: boolean = false;
   isDeleting: boolean = false;
   errorMessage: string = '';
 
-  // Variables pour édition/suppression
   editingAnnouncement: Announcement | null = null;
   announcementToDelete: Announcement | null = null;
 
@@ -90,7 +88,6 @@ export class AnnouncementsDashboardComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.announcements];
 
-    // Filtre par recherche
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(item =>
@@ -101,14 +98,12 @@ export class AnnouncementsDashboardComponent implements OnInit {
       );
     }
 
-    // Filtre par statut
     if (this.filterStatus !== 'all') {
       filtered = filtered.filter(item =>
         item.produits?.some(produit => produit.status === this.filterStatus)
       );
     }
 
-    // Filtre mes annonces
     if (this.showOnlyMine) {
       filtered = filtered.filter(item => this.isOwner(item));
     }
@@ -173,8 +168,19 @@ export class AnnouncementsDashboardComponent implements OnInit {
   }
 
   openEditAnnouncementModal(announcement: Announcement): void {
-    this.editingAnnouncement = { ...announcement };
-    this.showAnnouncementModal = true;
+    console.log('Ouverture du modal pour l\'annonce:', announcement.id);
+
+    this.announcementService.getAnnouncementById(announcement.id!).subscribe(
+      (fullAnnouncement) => {
+        console.log('Annonce récupérée complète:', fullAnnouncement);
+        this.editingAnnouncement = fullAnnouncement;
+        this.showAnnouncementModal = true;
+      },
+      (error) => {
+        console.error("Erreur lors de la récupération des détails de l'annonce", error);
+        this.notificationService.error("Impossible de modifier cette annonce pour le moment.");
+      }
+    );
   }
 
   closeAnnouncementModal(): void {
@@ -241,14 +247,11 @@ export class AnnouncementsDashboardComponent implements OnInit {
       });
   }
 
-  // Header actions
   handleLogin(): void {
-    // Implement or delegate to auth service
     console.log('Handle login');
   }
 
   handleSignup(): void {
-    // Implement or delegate to auth service
     console.log('Handle signup');
   }
 

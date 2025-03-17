@@ -45,8 +45,16 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['editingAnnouncement'] && changes['editingAnnouncement'].currentValue) {
-      this.populateFormWithAnnouncement();
+    console.log('ngOnChanges détecté:', changes);
+
+    if (changes['editingAnnouncement']) {
+      console.log('Changement de editingAnnouncement:', changes['editingAnnouncement'].currentValue);
+
+      if (changes['editingAnnouncement'].currentValue) {
+        setTimeout(() => {
+          this.populateFormWithAnnouncement();
+        }, 0);
+      }
     }
   }
 
@@ -106,35 +114,47 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
   }
 
   populateFormWithAnnouncement(): void {
+    console.log('Début de populateFormWithAnnouncement avec:', this.editingAnnouncement);
+
     this.resetForm();
 
     while (this.productsArray.length > 0) {
       this.productsArray.removeAt(0);
     }
 
-    if (!this.editingAnnouncement) return;
+    if (!this.editingAnnouncement) {
+      console.log('Aucune annonce à éditer');
+      return;
+    }
 
-    this.announcementForm.patchValue({
-      createdAt: this.editingAnnouncement.createdAt,
-     // postedDate: this.editingAnnouncement.postedDate
-    });
-    this.editingAnnouncement.produits.forEach((product, index) => {
-      this.productsArray.push(this.createProductFormGroup());
-      this.productsArray.at(index).patchValue({
-        id: product.id,
-        name: product.name,
-        category: product.category,
-        description: product.description,
-        price: product.price,
-        quantity: product.quantity,
-        expirationDate: this.formatDateForInput(product.expirationDate),
-        location: product.location,
-        image: product.image,
-        status: product.status
+    console.log('Remplissage du formulaire avec:', this.editingAnnouncement);
+
+    this.announcementForm.get('title')?.setValue(this.editingAnnouncement.title);
+
+    if (this.editingAnnouncement.produits && this.editingAnnouncement.produits.length > 0) {
+      this.editingAnnouncement.produits.forEach((product, index) => {
+        this.productsArray.push(this.createProductFormGroup());
+
+        const productForm = this.productsArray.at(index) as FormGroup;
+        productForm.patchValue({
+          id: product.id,
+          name: product.name,
+          category: product.category,
+          description: product.description,
+          price: product.price,
+          quantity: product.quantity,
+          expirationDate: this.formatDateForInput(product.expirationDate),
+          location: product.location,
+          status: product.status
+        });
+
+        if (product.image) {
+          this.imagePreview[index] = product.image;
+        }
       });
-
-      this.imagePreview[index] = product.image;
-    });
+    } else {
+      this.productsArray.push(this.createProductFormGroup());
+    }
   }
 
   resetForm(): void {
@@ -143,9 +163,20 @@ export class AnnouncementFormComponent implements OnInit, OnChanges {
     this.selectedFiles = {};
   }
 
-  formatDateForInput(date: string): string {
-    const d = new Date(date);
-    return d.toISOString().substring(0, 10);
+  formatDateForInput(dateStr: string): string {
+    if (!dateStr) return '';
+
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        console.warn('Date invalide:', dateStr);
+        return '';
+      }
+      return date.toISOString().split('T')[0];
+    } catch (error) {
+      console.error('Erreur lors du formatage de la date:', dateStr);
+      return '';
+    }
   }
 
   onSubmit(): void {

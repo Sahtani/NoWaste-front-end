@@ -31,11 +31,11 @@ export class AnnouncementService {
     return this.http.post<Announcement>(`${this.apiUrl}`, announcement, { headers });
   }
 
-  updateAnnouncement(id: number, announcement: any): Observable<Announcement> {
+  updateAnnouncement(id: string, announcement: any): Observable<Announcement> {
     return this.http.put<Announcement>(`${this.apiUrl}${id}`, announcement);
   }
 
-  deleteAnnouncement(id: number): Observable<void> {
+  deleteAnnouncement(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}${id}`);
   }
 
