@@ -1,10 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {catchError, Observable, tap} from 'rxjs';
+import {catchError, map, Observable, of, tap} from 'rxjs';
 import {Router} from '@angular/router';
 import {User} from '../../models/user/user.model';
 import {AuthenticationResponse} from '../../models/authentication-response';
+import {jwtDecode} from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   private router = inject(Router);
   private tokenExpirationTime = 24 * 60 * 60 * 1000;
-
+  private tokenKey = 'auth_token';
   constructor(private http: HttpClient) {
   }
 
@@ -22,23 +23,18 @@ export class AuthService {
   }
 
   login(credentials: { email: string; password: string }): Observable<AuthenticationResponse> {
-    console.log('[AuthService] Login attempt with:', credentials.email);
 
     return this.http.post<AuthenticationResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
-          console.log('[AuthService] Login response received:', response);
-
           try {
             if (response && response.token) {
 
               localStorage.setItem('auth_token', response.token);
               const expirationDate = new Date(new Date().getTime() + this.tokenExpirationTime);
               localStorage.setItem('expirationDate', expirationDate.toISOString());
-              console.log('[AuthService] Set expiration date:', expirationDate);
 
               let userInfo: any = {};
-            //  userInfo.name = response.name;
 
               userInfo.email = response.email;
 
@@ -46,8 +42,6 @@ export class AuthService {
 
               const userInfoJSON = JSON.stringify(userInfo);
               localStorage.setItem('user_info', userInfoJSON);
-              console.log('[AuthService] Stored user_info in localStorage:', userInfoJSON);
-
               console.log('[AuthService] Verification - user_info from localStorage:', localStorage.getItem('user_info'));
             } else {
               console.error('[AuthService] Response is missing access_token');
@@ -91,35 +85,26 @@ export class AuthService {
       this.logout();
       return false;
     }
-
-    console.log('[AuthService] User is authenticated');
     return true;
   }
 
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
   getCurrentUser(): User | null {
-
-    if (!this.isAuthenticated()) {
-      console.log('User is not authenticated');
-      return null;
-    }
-
-    const userData = localStorage.getItem('user_info');
-    console.log('[AuthService] Retrieved user_info from localStorage:', userData);
-
-    if (!userData) {
-      console.log('No user_info found in localStorage');
+    const token = localStorage.getItem(this.tokenKey);
+    if (!token) {
       return null;
     }
 
     try {
-      const user = JSON.parse(userData) as User;
-      console.log('[AuthService] Successfully parsed user data:', user);
-      return user;
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken;
     } catch (error) {
-      console.error('[AuthService] Error parsing user data:', error);
-      this.logout();
+      console.error('Erreur lors du décodage du token:', error);
       return null;
     }
   }
+
 
 }

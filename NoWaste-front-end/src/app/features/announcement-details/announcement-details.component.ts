@@ -67,7 +67,7 @@ export class AnnouncementDetailsComponent implements OnInit {
   }
 
   isOwner(announcement: Announcement): boolean {
-    return announcement.userId === this.authService.getCurrentUser()?.id;
+    return announcement.user?.id === this.authService.getCurrentUser()?.id;
   }
 
   goBack(): void {

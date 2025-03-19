@@ -10,6 +10,7 @@ import {NotificationComponent} from '../notification/notification.component';
 import {HeaderComponent} from '../../layout/header/header.component';
 import {FormsModule} from '@angular/forms';
 import {CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf, SlicePipe} from '@angular/common';
+import {AnnouncementRequest} from '../../core/models/announcement-request.model';
 
 @Component({
   selector: 'app-announcements-dashboard',
@@ -50,8 +51,8 @@ export class AnnouncementsDashboardComponent implements OnInit {
   isDeleting: boolean = false;
   errorMessage: string = '';
 
-  editingAnnouncement: Announcement | null = null;
-  announcementToDelete: Announcement | null = null;
+  editingAnnouncement: AnnouncementRequest | null = null;
+  announcementToDelete: AnnouncementRequest | null = null;
 
   constructor(
     private announcementService: AnnouncementService,
@@ -91,16 +92,16 @@ export class AnnouncementsDashboardComponent implements OnInit {
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(item =>
-        item.produits?.some(produit =>
-          produit.name?.toLowerCase().includes(query) ||
-          produit.description?.toLowerCase().includes(query)
+        item.products?.some(product =>
+          product.name?.toLowerCase().includes(query) ||
+          product.description?.toLowerCase().includes(query)
         )
       );
     }
 
     if (this.filterStatus !== 'all') {
       filtered = filtered.filter(item =>
-        item.produits?.some(produit => produit.status === this.filterStatus)
+        item.products?.some(product => product.status === this.filterStatus)
       );
     }
 
@@ -122,8 +123,8 @@ export class AnnouncementsDashboardComponent implements OnInit {
       });
     } else if (this.sortBy === 'title') {
       filtered.sort((a, b) => {
-        const nameA = a.produits?.[0]?.name?.toLowerCase() || '';
-        const nameB = b.produits?.[0]?.name?.toLowerCase() || '';
+        const nameA = a.products?.[0]?.name?.toLowerCase() || '';
+        const nameB = b.products?.[0]?.name?.toLowerCase() || '';
         return nameA.localeCompare(nameB);
       });
     }
@@ -154,8 +155,9 @@ export class AnnouncementsDashboardComponent implements OnInit {
   isOwner(announcement: Announcement): boolean {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return false;
-
-    return announcement.userId === currentUser.id;
+    console.log('batat',announcement.user?.id);
+    console.log('khizou',currentUser.id);
+    return announcement.user?.id === currentUser.id ;
   }
 
   toggleMyAnnouncements(): void {
@@ -167,20 +169,29 @@ export class AnnouncementsDashboardComponent implements OnInit {
     this.showAnnouncementModal = true;
   }
 
-  openEditAnnouncementModal(announcement: Announcement): void {
-    console.log('Ouverture du modal pour l\'annonce:', announcement.id);
+  openEditAnnouncementModal(announcement: AnnouncementRequest): void {
+    console.log('Ouverture du modal pour l\'annonce ID:', announcement.id);
 
-    this.announcementService.getAnnouncementById(announcement.id!).subscribe(
-      (fullAnnouncement) => {
-        console.log('Annonce récupérée complète:', fullAnnouncement);
+    this.announcementService.getAnnouncementById(announcement.id!).subscribe({
+      next: (fullAnnouncement) => {
+
+        if (!fullAnnouncement) {
+          this.notificationService.error('Annonce introuvable');
+          return;
+        }
+
+        if (!fullAnnouncement.products || !Array.isArray(fullAnnouncement.products)) {
+          console.warn('Aucun produit trouvé dans l\'annonce');
+        }
+
         this.editingAnnouncement = fullAnnouncement;
         this.showAnnouncementModal = true;
       },
-      (error) => {
-        console.error("Erreur lors de la récupération des détails de l'annonce", error);
-        this.notificationService.error("Impossible de modifier cette annonce pour le moment.");
+      error: (error) => {
+        console.error('Erreur lors de la récupération de l\'annonce:', error);
+        this.notificationService.error('Erreur lors du chargement de l\'annonce');
       }
-    );
+    });
   }
 
   closeAnnouncementModal(): void {
@@ -188,31 +199,42 @@ export class AnnouncementsDashboardComponent implements OnInit {
     this.editingAnnouncement = null;
   }
 
-  saveAnnouncement(announcement: Announcement): void {
+  saveAnnouncement(announcement: AnnouncementRequest, productImages?: File[]): void {
     this.isSaving = true;
-
-    const request = this.editingAnnouncement
-      ? this.announcementService.updateAnnouncement(announcement.id!, announcement)
-      : this.announcementService.createAnnouncement(announcement);
+    console.log(this.authService.getCurrentUser());
+    let request;
+    if (this.editingAnnouncement && announcement.id) {
+      request = this.announcementService.updateAnnouncement(announcement.id, announcement);
+    } else {
+      request = this.announcementService.createAnnouncement(announcement);
+    }
 
     request.pipe(
       finalize(() => this.isSaving = false)
     ).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log('Announcement saved successfully:', response);
         this.closeAnnouncementModal();
-        this.loadAnnouncements();
+        setTimeout(() => this.loadAnnouncements(), 300);
         this.notificationService.success(
           this.editingAnnouncement ? 'Announcement updated successfully' : 'Announcement created successfully'
         );
       },
       error: (error) => {
-        this.notificationService.error('Error saving announcement. Please try again later.');
         console.error('Error saving announcement:', error);
+        if (error.error && error.error.message) {
+          console.error('Server error message:', error.error.message);
+        }
+        this.notificationService.error(
+          error.status === 413
+            ? 'Image size is too large. Please use smaller images (max 5MB per image).'
+            : 'Error saving announcement. Please try again later.'
+        );
       }
     });
   }
 
-  confirmDelete(announcement: Announcement): void {
+  confirmDelete(announcement: AnnouncementRequest): void {
     this.announcementToDelete = announcement;
     this.showDeleteModal = true;
   }

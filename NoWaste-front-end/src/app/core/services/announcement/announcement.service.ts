@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Announcement} from '../../models/announcement/announcement.model';
 import {map, Observable} from 'rxjs';
 import {AnnouncementResponse} from '../../../shared/interfaces/responses/AnnouncementResponse';
+import {AnnouncementRequest} from '../../models/announcement-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +25,14 @@ export class AnnouncementService {
     return this.http.get<Announcement>(`${this.apiUrl}${id}`);
   }
 
-  createAnnouncement(announcement: any): Observable<Announcement> {
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json');
+  createAnnouncement(announcementRequest: AnnouncementRequest): Observable<Announcement> {
+    const formData = new FormData();
 
-    return this.http.post<Announcement>(`${this.apiUrl}`, announcement, { headers });
+    formData.append('announcement', new Blob([JSON.stringify(announcementRequest)], {
+      type: 'application/json'
+    }));
+
+    return this.http.post<Announcement>(`${this.apiUrl}create`, formData);
   }
 
   updateAnnouncement(id: string, announcement: any): Observable<Announcement> {
@@ -49,5 +53,13 @@ export class AnnouncementService {
 
   getPendingAnnouncements(): Observable<Announcement[]> {
     return this.http.get<Announcement[]>(`${this.apiUrl}/admin/announcements/pending`);
+  }
+
+  uploadProductImage(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    return this.http.post<{imageUrl: string}>(`${this.apiUrl}upload`, formData)
+      .pipe(map(response => response.imageUrl));
   }
 }

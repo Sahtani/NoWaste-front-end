@@ -1,5 +1,6 @@
 import { Product } from '../product.model';
 import {AnnouncementStatus} from '../../enum/AnnouncementStatus';
+import {User} from '../user/user.model';
 
 export interface Announcement {
   id?: string;
@@ -8,6 +9,6 @@ export interface Announcement {
   postedDate?: Date;
   status?: AnnouncementStatus;
   rejectionReason?: string;
-  produits: Product[];
-  userId?: number;
+  products: Product[];
+  user?: User;
 }

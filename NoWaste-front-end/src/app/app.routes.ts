@@ -21,7 +21,7 @@ export const routes: Routes = [
     component: AnnouncementDetailsComponent,
     canActivate: [authGuard],
     data: {
-      roles: ['DONOR', 'beneficiary']
+      roles: ['DONOR', 'BENEFICIARY']
     }
   }
 

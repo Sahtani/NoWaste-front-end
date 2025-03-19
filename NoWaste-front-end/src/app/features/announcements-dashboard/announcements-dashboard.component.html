@@ -23,7 +23,7 @@
           <input
             [(ngModel)]="searchQuery"
             (input)="applyFilters()"
-            class="block w-full pl-12 pr-4 py-3 border border-[#264653]/20 rounded-xl bg-[#264653]/10 backdrop-blur-sm text-[#264653] placeholder-[#264653]/60 focus:ring-2 focus:ring-[#E9C46A] focus:border-transparent transition-all duration-300"
+            class="block w-full pl-12 pr-4 py-3 border focus:outline-hidden border-[#264653]/20 rounded-xl bg-[#264653]/10 backdrop-blur-sm text-[#264653] placeholder-[#264653]/60 focus:ring-2 focus:ring-[#E9C46A] focus:border-transparent transition-all duration-300"
             placeholder="Search announcements..."
           />
         </div>
@@ -150,12 +150,12 @@
           <div
             class="absolute inset-0 bg-gradient-to-t from-[#264653]/90 via-[#264653]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
 
-          <img *ngIf="announcement?.produits?.[0]?.image"
-               [src]="announcement?.produits?.[0]?.image"
+          <img *ngIf="announcement?.products?.[0]?.image"
+               [src]="announcement?.products?.[0]?.image"
                alt="Product image"
                class="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700">
 
-          <div *ngIf="!announcement?.produits?.[0]?.image"
+          <div *ngIf="!announcement?.products?.[0]?.image"
                class="h-full w-full bg-gradient-to-br from-[#2A9D8F]/30 to-[#264653]/30 flex items-center justify-center">
             <svg class="w-16 h-16 text-[#264653]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -165,7 +165,7 @@
           </div>
 
           <div class="absolute top-3 right-3 flex flex-col gap-1.5 z-20">
-            <span *ngFor="let product of announcement.produits | slice:0:2"
+            <span *ngFor="let product of announcement.products | slice:0:2"
                   [ngClass]="{
                     'from-green-400 to-green-500': product.status === 'AVAILABLE',
                     'from-yellow-400 to-yellow-500': product.status === 'RESERVED',
@@ -176,9 +176,9 @@
               {{ product.status }}
             </span>
 
-            <span *ngIf="announcement?.produits && announcement.produits.length > 2"
+            <span *ngIf="announcement?.products && announcement.products.length > 2"
                   class="bg-[#264653]/20 text-[#264653] text-xs font-medium px-3 py-1.5 rounded-full shadow-md backdrop-blur-sm transform group-hover:scale-105 transition-all">
-              +{{ announcement.produits.length - 2 }} more
+              +{{ announcement.products.length - 2 }} more
             </span>
           </div>
 
@@ -203,7 +203,7 @@
         <div class="p-5 text-[#264653]">
           <div class="flex justify-between items-start mb-2">
             <h3 class="text-lg font-semibold group-hover:text-[#E9C46A] transition-colors duration-300">
-              {{ announcement?.produits?.[0]?.name || 'Untitled' }}
+              {{ announcement?.products?.[0]?.name || 'Untitled' }}
             </h3>
 
             <div *ngIf="isOwner(announcement)" class="flex gap-1.5">
@@ -229,7 +229,7 @@
 
           <p
             class="mt-2 text-sm text-[#264653]/70 line-clamp-2 group-hover:text-[#264653]/90 transition-colors duration-300">
-            {{ announcement?.produits?.[0]?.description || 'No description available' }}
+            {{ announcement?.products?.[0]?.description || 'No description available' }}
           </p>
 
           <div class="mt-4 grid grid-cols-2 gap-3 text-xs text-[#264653]/60">
@@ -249,7 +249,7 @@
                       stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
                 <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
               </svg>
-              {{ announcement?.produits?.[0]?.location || 'Unknown' }}
+              {{ announcement?.products?.[0]?.location || 'Unknown' }}
             </div>
 
             <div
@@ -260,7 +260,7 @@
                   stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
               </svg>
               <span class="group-hover:font-medium transition-all duration-300">
-                {{ announcement?.produits?.[0]?.price ? (announcement?.produits?.[0]?.price | currency) : 'Free' }}
+                {{ announcement?.products?.[0]?.price ? (announcement?.products?.[0]?.price | currency) : 'Free' }}
               </span>
             </div>
 
@@ -271,13 +271,13 @@
                       stroke-width="2"></path>
               </svg>
               <span class="group-hover:font-medium transition-all duration-300">
-                {{ announcement?.produits?.[0]?.quantity || 0 }} available
+                {{ announcement?.products?.[0]?.quantity || 0 }} available
               </span>
             </div>
           </div>
           <div class="mt-4 pt-4 border-t border-[#264653]/10 flex justify-between items-center">
             <div>
-              <div class="text-[#E9C46A] font-medium">{{ announcement?.produits?.[0]?.price || 0 }} mad</div>
+              <div class="text-[#E9C46A] font-medium">{{ announcement?.products?.[0]?.price || 0 }} mad</div>
             </div>
 
             <button (click)="viewAnnouncementDetails(announcement)"
@@ -321,7 +321,7 @@
 </div>
 
 <div *ngIf="showAnnouncementModal"
-     class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn">
+     class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn">
   <div
     class="max-w-4xl w-full max-h-[90vh] overflow-auto animate-scaleIn bg-[#264653] rounded-xl border border-[#264653]/10 shadow-2xl">
     <app-announcement-form
