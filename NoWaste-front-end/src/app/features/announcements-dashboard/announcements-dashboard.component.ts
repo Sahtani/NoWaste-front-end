@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { AnnouncementService } from '../../core/services/announcement/announcement.service';
 import { NotificationService } from '../../core/services/notification/notification.service';
-import {Announcement} from '../../core/models/announcement/announcement.model';
-import {AuthService} from '../../core/services/authentication/auth.service';
-import {AnnouncementFormComponent} from '../announcement-form/announcement-form.component';
-import {NotificationComponent} from '../notification/notification.component';
-import {HeaderComponent} from '../../layout/header/header.component';
-import {FormsModule} from '@angular/forms';
-import {CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf, SlicePipe} from '@angular/common';
-import {AnnouncementRequest} from '../../core/models/announcement-request.model';
+import { Announcement } from '../../core/models/announcement/announcement.model';
+import { AuthService } from '../../core/services/authentication/auth.service';
+import { AnnouncementFormComponent } from '../announcement-form/announcement-form.component';
+import { NotificationComponent } from '../notification/notification.component';
+import { HeaderComponent } from '../../layout/header/header.component';
+import { FormsModule } from '@angular/forms';
+import { CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf, SlicePipe } from '@angular/common';
+import { AnnouncementRequest } from '../../core/models/announcement-request.model';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-announcements-dashboard',
@@ -29,7 +31,9 @@ import {AnnouncementRequest} from '../../core/models/announcement-request.model'
   ],
   styleUrls: ['./announcements-dashboard.component.css']
 })
-export class AnnouncementsDashboardComponent implements OnInit {
+export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
   announcements: Announcement[] = [];
   filteredAnnouncements: Announcement[] = [];
 
@@ -65,11 +69,17 @@ export class AnnouncementsDashboardComponent implements OnInit {
     this.loadAnnouncements();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadAnnouncements(): void {
     this.isLoading = true;
 
     this.announcementService.getAnnouncements()
       .pipe(
+        takeUntil(this.destroy$),
         finalize(() => this.isLoading = false)
       )
       .subscribe({
@@ -81,9 +91,24 @@ export class AnnouncementsDashboardComponent implements OnInit {
         error: (error) => {
           this.errorMessage = 'Failed to load announcements';
           this.notificationService.error('Error loading announcements. Please try again later.');
-          console.error('Error loading announcements:', error);
         }
       });
+  }
+
+  getImageUrl(imagePath: string | undefined): string {
+    if (!imagePath) {
+      return './assets/images/placeholder.jpg';
+    }
+
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+
+    return `${environment.apiUrl}${imagePath}`;
+  }
+
+  handleImageError(event: any): void {
+    event.target.src = 'assets/images/placeholder.jpg';
   }
 
   applyFilters(): void {
@@ -155,43 +180,36 @@ export class AnnouncementsDashboardComponent implements OnInit {
   isOwner(announcement: Announcement): boolean {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return false;
-    console.log('batat',announcement.user?.id);
-    console.log('khizou',currentUser.id);
-    return announcement.user?.id === currentUser.id ;
+    return announcement.user?.id === currentUser.id;
   }
 
   toggleMyAnnouncements(): void {
     this.showOnlyMine = !this.showOnlyMine;
     this.applyFilters();
   }
+
   openAddAnnouncementModal(): void {
     this.editingAnnouncement = null;
     this.showAnnouncementModal = true;
   }
 
   openEditAnnouncementModal(announcement: AnnouncementRequest): void {
-    console.log('Ouverture du modal pour l\'annonce ID:', announcement.id);
+    this.announcementService.getAnnouncementById(announcement.id!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (fullAnnouncement) => {
+          if (!fullAnnouncement) {
+            this.notificationService.error('Announcement not found');
+            return;
+          }
 
-    this.announcementService.getAnnouncementById(announcement.id!).subscribe({
-      next: (fullAnnouncement) => {
-
-        if (!fullAnnouncement) {
-          this.notificationService.error('Annonce introuvable');
-          return;
+          this.editingAnnouncement = fullAnnouncement;
+          this.showAnnouncementModal = true;
+        },
+        error: () => {
+          this.notificationService.error('Error loading Announcement');
         }
-
-        if (!fullAnnouncement.products || !Array.isArray(fullAnnouncement.products)) {
-          console.warn('Aucun produit trouvé dans l\'annonce');
-        }
-
-        this.editingAnnouncement = fullAnnouncement;
-        this.showAnnouncementModal = true;
-      },
-      error: (error) => {
-        console.error('Erreur lors de la récupération de l\'annonce:', error);
-        this.notificationService.error('Erreur lors du chargement de l\'annonce');
-      }
-    });
+      });
   }
 
   closeAnnouncementModal(): void {
@@ -199,9 +217,9 @@ export class AnnouncementsDashboardComponent implements OnInit {
     this.editingAnnouncement = null;
   }
 
-  saveAnnouncement(announcement: AnnouncementRequest, productImages?: File[]): void {
+  saveAnnouncement(announcement: AnnouncementRequest): void {
     this.isSaving = true;
-    console.log(this.authService.getCurrentUser());
+
     let request;
     if (this.editingAnnouncement && announcement.id) {
       request = this.announcementService.updateAnnouncement(announcement.id, announcement);
@@ -210,10 +228,10 @@ export class AnnouncementsDashboardComponent implements OnInit {
     }
 
     request.pipe(
+      takeUntil(this.destroy$),
       finalize(() => this.isSaving = false)
     ).subscribe({
-      next: (response) => {
-        console.log('Announcement saved successfully:', response);
+      next: () => {
         this.closeAnnouncementModal();
         setTimeout(() => this.loadAnnouncements(), 300);
         this.notificationService.success(
@@ -221,10 +239,6 @@ export class AnnouncementsDashboardComponent implements OnInit {
         );
       },
       error: (error) => {
-        console.error('Error saving announcement:', error);
-        if (error.error && error.error.message) {
-          console.error('Server error message:', error.error.message);
-        }
         this.notificationService.error(
           error.status === 413
             ? 'Image size is too large. Please use smaller images (max 5MB per image).'
@@ -251,6 +265,7 @@ export class AnnouncementsDashboardComponent implements OnInit {
 
     this.announcementService.deleteAnnouncement(this.announcementToDelete.id!)
       .pipe(
+        takeUntil(this.destroy$),
         finalize(() => {
           this.isDeleting = false;
           this.showDeleteModal = false;
@@ -262,19 +277,18 @@ export class AnnouncementsDashboardComponent implements OnInit {
           this.notificationService.success('Announcement deleted successfully');
           this.announcementToDelete = null;
         },
-        error: (error) => {
+        error: () => {
           this.notificationService.error('Error deleting announcement. Please try again later.');
-          console.error('Error deleting announcement:', error);
         }
       });
   }
 
   handleLogin(): void {
-    console.log('Handle login');
+    // Implement login logic
   }
 
   handleSignup(): void {
-    console.log('Handle signup');
+    // Implement signup logic
   }
 
   handleLogout(): void {

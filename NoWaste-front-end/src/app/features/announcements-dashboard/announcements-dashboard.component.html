@@ -151,10 +151,10 @@
             class="absolute inset-0 bg-gradient-to-t from-[#264653]/90 via-[#264653]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
 
           <img *ngIf="announcement?.products?.[0]?.image"
-               [src]="announcement?.products?.[0]?.image"
-               alt="Product image"
+               [src]="getImageUrl(announcement?.products?.[0]?.image)"
+               [alt]="announcement?.products?.[0]?.name || 'Product image'"
+               (error)="handleImageError($event)"
                class="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700">
-
           <div *ngIf="!announcement?.products?.[0]?.image"
                class="h-full w-full bg-gradient-to-br from-[#2A9D8F]/30 to-[#264653]/30 flex items-center justify-center">
             <svg class="w-16 h-16 text-[#264653]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">

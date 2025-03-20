@@ -15,96 +15,98 @@ export class AuthService {
   private router = inject(Router);
   private tokenExpirationTime = 24 * 60 * 60 * 1000;
   private tokenKey = 'auth_token';
+
+  private currentUserCache: User | null = null;
+
   constructor(private http: HttpClient) {
+
+    this.initCurrentUserCache();
+  }
+
+  private initCurrentUserCache(): void {
+    const token = localStorage.getItem(this.tokenKey);
+    if (token) {
+      try {
+        this.currentUserCache = jwtDecode(token);
+      } catch (error) {
+        this.currentUserCache = null;
+      }
+    }
   }
 
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+    return this.http.post(`${this.apiUrl}/register`, userData).pipe(
+      catchError(error => {
+        throw error;
+      })
+    );
   }
 
   login(credentials: { email: string; password: string }): Observable<AuthenticationResponse> {
-
     return this.http.post<AuthenticationResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
-          try {
-            if (response && response.token) {
+          if (response && response.token) {
+            localStorage.setItem(this.tokenKey, response.token);
+            const expirationDate = new Date(new Date().getTime() + this.tokenExpirationTime);
+            localStorage.setItem('expirationDate', expirationDate.toISOString());
 
-              localStorage.setItem('auth_token', response.token);
-              const expirationDate = new Date(new Date().getTime() + this.tokenExpirationTime);
-              localStorage.setItem('expirationDate', expirationDate.toISOString());
+            let userInfo: any = {};
+            userInfo.email = response.email;
+            userInfo.role = response.role;
 
-              let userInfo: any = {};
+            localStorage.setItem('user_info', JSON.stringify(userInfo));
 
-              userInfo.email = response.email;
-
-              userInfo.role = response.role;
-
-              const userInfoJSON = JSON.stringify(userInfo);
-              localStorage.setItem('user_info', userInfoJSON);
-              console.log('[AuthService] Verification - user_info from localStorage:', localStorage.getItem('user_info'));
-            } else {
-              console.error('[AuthService] Response is missing access_token');
-            }
-          } catch (error) {
-            console.error('[AuthService] Error processing login response:', error);
+            this.initCurrentUserCache();
           }
         }),
         catchError(error => {
-          console.error('[AuthService] HTTP error during login:', error);
           throw error;
         })
       );
   }
 
   logout(): void {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem(this.tokenKey);
     localStorage.removeItem('user_info');
     localStorage.removeItem('expirationDate');
-    console.log('[AuthService] Items removed from localStorage');
+    this.currentUserCache = null;
     this.router.navigate(['']);
   }
 
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem(this.tokenKey);
     const expirationDate = localStorage.getItem('expirationDate');
 
-    if (!token) {
-      console.log('[AuthService] No auth_token found in localStorage');
-      return false;
-    }
-
-    if (!expirationDate) {
-      console.log('[AuthService] No expirationDate found in localStorage');
+    if (!token || !expirationDate) {
       return false;
     }
 
     const isExpired = new Date() > new Date(expirationDate);
     if (isExpired) {
-      console.log('[AuthService] Token has expired');
       this.logout();
       return false;
     }
+
     return true;
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
-  }
+
   getCurrentUser(): User | null {
+    if (this.currentUserCache) {
+      return this.currentUserCache;
+    }
+
     const token = localStorage.getItem(this.tokenKey);
     if (!token) {
       return null;
     }
 
     try {
-      const decodedToken: any = jwtDecode(token);
-      return decodedToken;
+      this.currentUserCache = jwtDecode(token);
+      return this.currentUserCache;
     } catch (error) {
-      console.error('Erreur lors du décodage du token:', error);
       return null;
     }
   }
-
-
 }
