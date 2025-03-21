@@ -45,7 +45,13 @@ export class AnnouncementService {
   }
 
   createAnnouncement(announcementRequest: AnnouncementRequest): Observable<Announcement> {
+    if (!announcementRequest.products) {
+      announcementRequest.products = [];
+    }
+
     const formData = new FormData();
+
+    console.log('Creating announcement with products:', announcementRequest.products);
 
     formData.append('announcement', new Blob([JSON.stringify(announcementRequest)], {
       type: 'application/json'
@@ -56,7 +62,6 @@ export class AnnouncementService {
         console.error('Error creating announcement:', error);
         throw error;
       }),
-
       map(response => {
         this.cachedAnnouncements$ = null;
         return response;

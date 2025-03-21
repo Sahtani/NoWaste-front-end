@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewRef, ChangeDetectorRef} from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -29,7 +29,8 @@ import { environment } from '../../../environments/environment';
     DatePipe,
     CurrencyPipe
   ],
-  styleUrls: ['./announcements-dashboard.component.css']
+  styleUrls: ['./announcements-dashboard.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -62,7 +63,8 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
     private announcementService: AnnouncementService,
     private authService: AuthService,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -87,6 +89,9 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
           this.announcements = data;
           this.applyFilters();
           this.calculateTotalPages();
+         //  this.cdr.detectChanges();
+          console.table(this.announcements);
+          console.log('Premier produit image path:',this.announcements[0].products);
         },
         error: (error) => {
           this.errorMessage = 'Failed to load announcements';
@@ -95,21 +100,27 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
       });
   }
 
+
   getImageUrl(imagePath: string | undefined): string {
     if (!imagePath) {
-      return './assets/images/placeholder.jpg';
+      return '';
     }
 
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
+    console.log(`${imagePath}`);
 
-    return `${environment.apiUrl}${imagePath}`;
+    if (imagePath.startsWith('/api/')) {
+
+      const path = imagePath.startsWith('/api/') ? imagePath.substring(4) : imagePath;
+      console.log(`${environment.apiUrlDash}${path}`);
+      return `${environment.apiUrlDash}${path}`;
+    }
+
+    return `${environment.apiUrlDash}${imagePath}`;
   }
 
-  handleImageError(event: any): void {
-    event.target.src = 'assets/images/placeholder.jpg';
-  }
 
   applyFilters(): void {
     let filtered = [...this.announcements];
@@ -146,7 +157,7 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
         const dateB = b.postedDate ? new Date(b.postedDate) : new Date(0);
         return dateB.getTime() - dateA.getTime();
       });
-    } else if (this.sortBy === 'title') {
+    } else if (this.sortBy === 'product') {
       filtered.sort((a, b) => {
         const nameA = a.products?.[0]?.name?.toLowerCase() || '';
         const nameB = b.products?.[0]?.name?.toLowerCase() || '';
@@ -229,9 +240,14 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
 
     request.pipe(
       takeUntil(this.destroy$),
-      finalize(() => this.isSaving = false)
+      finalize(() => {
+        this.isSaving = false;
+        if (this.cdr && !(this.cdr as ViewRef).destroyed) {
+          this.cdr.detectChanges();
+        }
+      })
     ).subscribe({
-      next: () => {
+      next: (response) => {
         this.closeAnnouncementModal();
         setTimeout(() => this.loadAnnouncements(), 300);
         this.notificationService.success(
@@ -239,11 +255,18 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
         );
       },
       error: (error) => {
+        console.error('Failed to save announcement:', error);
         this.notificationService.error(
           error.status === 413
             ? 'Image size is too large. Please use smaller images (max 5MB per image).'
             : 'Error saving announcement. Please try again later.'
         );
+        this.closeAnnouncementModal();
+      },
+      complete: () => {
+        if (this.isSaving) {
+          this.isSaving = false;
+        }
       }
     });
   }
