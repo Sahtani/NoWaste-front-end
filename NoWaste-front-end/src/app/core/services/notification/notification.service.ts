@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 export interface Notification {
   id: string;
@@ -11,13 +12,26 @@ export interface Notification {
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationService {
+export class NotificationService implements OnDestroy {
   private notifications = new BehaviorSubject<Notification[]>([]);
+  private destroy$ = new Subject<void>();
+  private timeoutMap: Map<string, any> = new Map();
 
   constructor() { }
 
+  ngOnDestroy(): void {
+    this.timeoutMap.forEach(timeoutId => clearTimeout(timeoutId));
+    this.timeoutMap.clear();
+
+    this.notifications.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   getNotifications(): Observable<Notification[]> {
-    return this.notifications.asObservable();
+    return this.notifications.asObservable().pipe(
+      takeUntil(this.destroy$)
+    );
   }
 
   show(type: 'success' | 'error' | 'warning' | 'info', message: string, duration: number = 5000): void {
@@ -28,9 +42,12 @@ export class NotificationService {
     this.notifications.next([...currentNotifications, notification]);
 
     if (duration > 0) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         this.dismiss(id);
+        this.timeoutMap.delete(id);
       }, duration);
+
+      this.timeoutMap.set(id, timeoutId);
     }
   }
 
@@ -53,9 +70,22 @@ export class NotificationService {
   dismiss(id: string): void {
     const currentNotifications = this.notifications.getValue();
     this.notifications.next(currentNotifications.filter(notification => notification.id !== id));
+
+    if (this.timeoutMap.has(id)) {
+      clearTimeout(this.timeoutMap.get(id));
+      this.timeoutMap.delete(id);
+    }
+  }
+
+  clearAll(): void {
+
+    this.timeoutMap.forEach(timeoutId => clearTimeout(timeoutId));
+    this.timeoutMap.clear();
+
+    this.notifications.next([]);
   }
 
   private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    return Date.now().toString(36) + Math.random().toString(36).substring(2);
   }
 }

@@ -251,7 +251,7 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
         this.closeAnnouncementModal();
         setTimeout(() => this.loadAnnouncements(), 300);
         this.notificationService.success(
-          this.editingAnnouncement ? 'Announcement updated successfully' : 'Announcement created successfully'
+          this.editingAnnouncement ? 'Announcement updated successfully' : 'Announcement created successfully',5000
         );
       },
       error: (error) => {

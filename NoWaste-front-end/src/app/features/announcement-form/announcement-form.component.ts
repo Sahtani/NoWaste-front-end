@@ -248,13 +248,12 @@ export class AnnouncementFormComponent implements OnChanges {
     }
 
     const currentUserId = this.authService.getCurrentUser()?.id;
-    console.log(currentUserId,'user id mkynch ');
     if (!currentUserId) {
       return;
     }
 
     if (Object.keys(this.uploadErrors).length > 0) {
-      alert('Veuillez corriger les erreurs d\'image avant de soumettre');
+      alert('Please correct any image errors before submitting');
       return;
     }
 
@@ -268,6 +267,7 @@ export class AnnouncementFormComponent implements OnChanges {
           tap((imageUrl: string) => {
             const control = this.productsArray.at(i) as FormGroup;
             control.get('image')?.setValue(imageUrl);
+            console.log(imageUrl);
           })
         );
         imageUploads.push(upload);
