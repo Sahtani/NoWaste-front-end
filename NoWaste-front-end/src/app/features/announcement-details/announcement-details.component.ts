@@ -6,6 +6,7 @@ import {AnnouncementService} from '../../core/services/announcement/announcement
 import {Announcement} from '../../core/models/announcement/announcement.model';
 import {AuthService} from '../../core/services/authentication/auth.service';
 import {AnnouncementDetails} from '../../core/models/announcement-details.model';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-announcement-details',
@@ -97,4 +98,26 @@ export class AnnouncementDetailsComponent implements OnInit {
   expressInterest(announcement: Announcement): void {
     console.log('Expressed interest in announcement:', announcement.id);
   }
+
+  getImageUrl(imagePath: string | undefined): string {
+    if (!imagePath) {
+      return '';
+    }
+
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    console.log(`${imagePath}`);
+
+    if (imagePath.startsWith('/api/')) {
+
+      const path = imagePath.startsWith('/api/') ? imagePath.substring(4) : imagePath;
+      console.log(`${environment.apiUrlDash}${path}`);
+      return `${environment.apiUrlDash}${path}`;
+    }
+
+    return `${environment.apiUrlDash}${imagePath}`;
+  }
 }
+
+

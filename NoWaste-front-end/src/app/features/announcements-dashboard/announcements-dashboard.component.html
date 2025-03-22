@@ -182,7 +182,6 @@
           </div>
         </div>
 
-        <!-- Product info section (moved outside the image container) -->
         <div class="p-5 text-[#264653]">
           <div class="flex justify-between items-start mb-2">
             <h3 class="text-lg font-semibold group-hover:text-[#E9C46A] transition-colors duration-300">
@@ -209,12 +208,20 @@
           </div>
 
           <div class="mt-4 grid grid-cols-2 gap-3 text-xs text-[#264653]/60">
-            <div class="flex items-center group-hover:text-[#E9C46A] transition-colors duration-300 bg-[#264653]/5 rounded-lg p-2">
+            <div *ngIf="announcement?.postedDate" class="flex items-center group-hover:text-[#E9C46A] transition-colors duration-300 bg-[#264653]/5 rounded-lg p-2">
               <svg class="w-4 h-4 mr-2 text-[#E9C46A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                       stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
               </svg>
-              {{ announcement?.postedDate | date:'MMM d' }}
+              {{ announcement.postedDate | date:'MMM d' }}
+            </div>
+
+            <div *ngIf="!announcement?.postedDate && announcement?.createdAt" class="flex items-center group-hover:text-[#E9C46A] transition-colors duration-300 bg-[#264653]/5 rounded-lg p-2">
+              <svg class="w-4 h-4 mr-2 text-[#E9C46A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+              {{ announcement.createdAt | date:'MMM d' }} <span class="text-xs ml-1">(created)</span>
             </div>
 
             <div class="flex items-center justify-end group-hover:text-[#E9C46A] transition-colors duration-300 bg-[#264653]/5 rounded-lg p-2">

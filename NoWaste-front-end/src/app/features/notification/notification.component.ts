@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NgFor, NgClass } from '@angular/common';
 import { NotificationService, Notification } from '../../core/services/notification/notification.service';
@@ -26,11 +26,17 @@ export class NotificationComponent implements OnInit, OnDestroy {
   notifications: Notification[] = [];
   private subscription: Subscription | null = null;
 
-  constructor(private notificationService: NotificationService) { }
+  constructor(
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     this.subscription = this.notificationService.getNotifications().subscribe(
-      notifications => this.notifications = notifications
+      notifications => {
+        this.notifications = notifications;
+        this.cdr.detectChanges();
+      }
     );
   }
 

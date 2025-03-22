@@ -90,8 +90,6 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
           this.applyFilters();
           this.calculateTotalPages();
          //  this.cdr.detectChanges();
-          console.table(this.announcements);
-          console.log('Premier produit image path:',this.announcements[0].products);
         },
         error: (error) => {
           this.errorMessage = 'Failed to load announcements';
@@ -250,6 +248,7 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.closeAnnouncementModal();
         setTimeout(() => this.loadAnnouncements(), 300);
+        this.refreshAnnouncements();
         this.notificationService.success(
           this.editingAnnouncement ? 'Announcement updated successfully' : 'Announcement created successfully',5000
         );
@@ -285,11 +284,19 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
     if (!this.announcementToDelete) return;
 
     this.isDeleting = true;
+    const safetyTimeout = setTimeout(() => {
+      if (this.isDeleting) {
+        this.isDeleting = false;
+        this.showDeleteModal = false;
+        this.notificationService.error('Delete operation timed out. Please try again.');
+      }
+    }, 10000);
 
     this.announcementService.deleteAnnouncement(this.announcementToDelete.id!)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
+          clearTimeout(safetyTimeout);
           this.isDeleting = false;
           this.showDeleteModal = false;
         })
@@ -322,4 +329,18 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
   viewAnnouncementDetails(announcement: Announcement): void {
     this.router.navigate(['/announcements', announcement.id]);
   }
+  refreshAnnouncements(): void {
+    // Forcer une nouvelle requête
+    this.announcementService.refreshAnnouncements().subscribe({
+      next: (data) => {
+        this.announcements = data;
+        this.applyFilters();
+        this.calculateTotalPages();
+      },
+      error: (error) => {
+        console.error('Error refreshing announcements:', error);
+      }
+    });
+  }
+
 }

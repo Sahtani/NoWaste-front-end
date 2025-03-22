@@ -51,8 +51,6 @@ export class AnnouncementService {
 
     const formData = new FormData();
 
-    console.log('Creating announcement with products:', announcementRequest.products);
-
     formData.append('announcement', new Blob([JSON.stringify(announcementRequest)], {
       type: 'application/json'
     }));
