@@ -35,7 +35,7 @@ export class AuthService {
   }
 
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData).pipe(
+    return this.http.post(`${this.apiUrl}register`, userData).pipe(
       catchError(error => {
         throw error;
       })
@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   login(credentials: { email: string; password: string }): Observable<AuthenticationResponse> {
-    return this.http.post<AuthenticationResponse>(`${this.apiUrl}/login`, credentials)
+    return this.http.post<AuthenticationResponse>(`${this.apiUrl}login`, credentials)
       .pipe(
         tap(response => {
           if (response && response.token) {

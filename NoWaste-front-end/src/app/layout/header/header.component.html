@@ -1,35 +1,243 @@
-<!-- header.component.html -->
-<header class="sticky top-0 z-40 bg-white shadow-sm">
+<!-- navbar.component.html -->
+<header class="sticky top-0 z-40 bg-white shadow-sm" (click)="closeDropdowns()">
   <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row justify-between items-center py-4 gap-4">
+      <!-- Logo -->
       <div class="flex items-center">
-        <div class="flex items-center gap-2 cursor-pointer ml-8">
+        <a routerLink="/" class="flex items-center gap-2 cursor-pointer">
           <div class="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#2A9D8F] to-[#4CAF50] flex justify-center items-center shadow-sm">
             <div class="absolute w-4 h-4 bg-white rounded-tr-full rounded-bl-full transform rotate-45"></div>
           </div>
-          <!-- Logo Text -->
           <span class="text-2xl font-display font-bold">
             <span class="text-[#2A9D8F]">No</span><span class="text-[#264653]">Waste</span>
           </span>
-        </div>
+        </a>
       </div>
-      <nav class="flex flex-wrap justify-center md:justify-start gap-2 md:gap-6">
-        <a href="#features" class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">Features</a>
-        <a href="#how-it-works" class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">How It Works</a>
-        <a href="#impact" class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">Impact</a>
-        <a href="#about" class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">About Us</a>
+
+      <!-- Main navigation -->
+      <nav class="hidden md:flex items-center space-x-6">
+        <a routerLink="/announcements"
+           routerLinkActive="text-[#2A9D8F] after:w-full"
+           [routerLinkActiveOptions]="{exact: false}"
+           class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">
+          Browse
+        </a>
+
+        <a *ngIf="isDonor"
+           routerLink="/donor/dashboard"
+           routerLinkActive="text-[#2A9D8F] after:w-full"
+           class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">
+          My Donations
+        </a>
+
+        <a *ngIf="isBenefiter"
+           routerLink="/benefiter/dashboard"
+           routerLinkActive="text-[#2A9D8F] after:w-full"
+           class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">
+          My Collections
+        </a>
+
+        <a routerLink="/messages"
+           routerLinkActive="text-[#2A9D8F] after:w-full"
+           class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">
+          Messages
+        </a>
+
+        <a *ngIf="isAdmin"
+           routerLink="/admin"
+           routerLinkActive="text-[#2A9D8F] after:w-full"
+           class="text-[#264653] hover:text-[#2A9D8F] font-medium px-2 py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#2A9D8F] after:transition-all hover:after:w-full">
+          Admin
+        </a>
+
+        <!-- Search button -->
+        <button (click)="toggleSearchBar()" class="p-2 rounded-full hover:bg-gray-100 text-[#264653]">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
       </nav>
-      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mr-8">
-        <ng-container *ngIf="!authService.isAuthenticated()">
-          <button (click)="login()" class="border border-[#2A9D8F] text-[#2A9D8F] hover:bg-[#2A9D8F]/5 px-4 py-2 rounded-lg font-medium transition-colors">Login</button>
-          <button (click)="signup()" class="bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white px-4 py-2 rounded-lg font-medium shadow-[0_4px_6px_rgba(0,0,0,0.07)] transition-colors">Get Started</button>
-        </ng-container>
-        <ng-container *ngIf="authService.isAuthenticated()">
-          <button (click)="logout()" class="px-4 py-2 text-white bg-[#E76F51] hover:bg-[#E76F51]/90 rounded-lg">
-            Logout
+
+      <!-- Auth buttons and profile -->
+      <div class="flex items-center gap-3">
+        <!-- Add announcement button -->
+        <a *ngIf="authService.isAuthenticated()"
+           routerLink="/announcements/new"
+           class="bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors hidden md:block">
+          Add Announcement
+        </a>
+
+        <!-- Login/Register buttons -->
+        <div *ngIf="!authService.isAuthenticated()" class="flex space-x-2">
+          <button (click)="login()"
+                  class="border border-[#2A9D8F] text-[#2A9D8F] hover:bg-[#2A9D8F]/5 px-4 py-2 rounded-lg font-medium transition-colors">
+            Login
           </button>
-        </ng-container>
+          <button (click)="signup()"
+                  class="bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-colors">
+            Get Started
+          </button>
+        </div>
+
+        <!-- Profile dropdown -->
+        <div *ngIf="authService.isAuthenticated()" class="relative">
+          <button (click)="toggleProfileDropdown($event)"
+                  class="flex items-center text-sm rounded-full focus:outline-none">
+            <div *ngIf="currentUser?.avatar" class="h-8 w-8 rounded-full overflow-hidden">
+              <img [src]="currentUser?.avatar" alt="User avatar" class="h-full w-full object-cover">
+            </div>
+            <div *ngIf="!currentUser?.avatar"
+                 class="h-8 w-8 rounded-full bg-[#2A9D8F]/20 flex items-center justify-center text-[#2A9D8F]">
+              {{ currentUser?.name?.charAt(0)?.toUpperCase() || 'U' }}
+            </div>
+          </button>
+
+          <!-- Profile dropdown menu -->
+          <div *ngIf="showProfileDropdown"
+               class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden z-50"
+               (click)="$event.stopPropagation()">
+            <div class="p-3 border-b border-gray-100">
+              <p class="font-medium text-[#264653]">{{ currentUser?.name || 'User' }}</p>
+              <p class="text-xs text-gray-500 truncate">{{ currentUser?.email }}</p>
+            </div>
+
+            <div class="py-1">
+              <a routerLink="/profile"
+                 class="block cursor-pointer px-4 py-2 text-sm text-[#264653] hover:bg-gray-100">
+                Your Profile
+              </a>
+              <a routerLink="/settings"
+                 class="block px-4 py-2 text-sm text-[#264653] hover:bg-gray-100">
+                Settings
+              </a>
+              <button (click)="logout()"
+                      class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile menu button -->
+        <button (click)="toggleMobileMenu()"
+                class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-[#264653]">
+          <svg *ngIf="!showMobileMenu" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg *ngIf="showMobileMenu" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div *ngIf="showMobileMenu" class="md:hidden py-4 border-t border-gray-100">
+      <div class="flex flex-col space-y-2">
+        <a routerLink="/announcements"
+           routerLinkActive="text-[#2A9D8F]"
+           class="px-3 py-2 text-[#264653] font-medium">
+          Browse
+        </a>
+
+        <a *ngIf="isDonor"
+           routerLink="/donor/dashboard"
+           routerLinkActive="text-[#2A9D8F]"
+           class="px-3 py-2 text-[#264653] font-medium">
+          My Donations
+        </a>
+
+        <a *ngIf="isBenefiter"
+           routerLink="/benefiter/dashboard"
+           routerLinkActive="text-[#2A9D8F]"
+           class="px-3 py-2 text-[#264653] font-medium">
+          My Collections
+        </a>
+
+        <a routerLink="/messages"
+           routerLinkActive="text-[#2A9D8F]"
+           class="px-3 py-2 text-[#264653] font-medium">
+          Messages
+        </a>
+
+        <a *ngIf="isAdmin"
+           routerLink="/admin"
+           routerLinkActive="text-[#2A9D8F]"
+           class="px-3 py-2 text-[#264653] font-medium">
+          Admin
+        </a>
+
+        <a *ngIf="authService.isAuthenticated()"
+           routerLink="/profile"
+           routerLinkActive="text-[#2A9D8F]"
+           class="px-3 py-2 text-[#264653] font-medium">
+          Profile
+        </a>
+
+        <a *ngIf="authService.isAuthenticated()"
+           routerLink="/settings"
+           routerLinkActive="text-[#2A9D8F]"
+           class="px-3 py-2 text-[#264653] font-medium">
+          Settings
+        </a>
+
+        <button *ngIf="authService.isAuthenticated()"
+                (click)="logout()"
+                class="px-3 py-2 text-left text-red-600 font-medium">
+          Sign Out
+        </button>
+
+        <a *ngIf="authService.isAuthenticated()"
+           routerLink="/announcements/new"
+           class="mt-4 bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white font-medium py-2 px-4 rounded-lg text-center">
+          Add Announcement
+        </a>
       </div>
     </div>
   </div>
 </header>
+
+<!-- Search bar overlay -->
+<div *ngIf="showSearchBar" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20" (click)="toggleSearchBar()">
+  <div class="w-full max-w-2xl bg-white rounded-lg shadow-xl overflow-hidden" (click)="$event.stopPropagation()">
+    <div class="relative">
+      <input
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="performSearch()"
+        id="search-input"
+        type="text"
+        placeholder="Search for products, categories, locations..."
+        class="w-full px-4 py-3 text-[#264653] focus:outline-none"
+      >
+      <button (click)="toggleSearchBar()" class="absolute top-3 right-3 text-gray-500 hover:text-[#264653]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Quick links -->
+    <div class="p-4 bg-gray-50 text-[#264653]">
+      <h3 class="font-medium mb-2">Popular Categories</h3>
+      <div class="flex flex-wrap gap-2">
+        <a routerLink="/search?category=Fruits"
+           class="bg-[#2A9D8F]/10 hover:bg-[#2A9D8F]/20 text-[#2A9D8F] px-3 py-1 rounded-full text-sm">
+          Fruits
+        </a>
+        <a routerLink="/search?category=Vegetables"
+           class="bg-[#2A9D8F]/10 hover:bg-[#2A9D8F]/20 text-[#2A9D8F] px-3 py-1 rounded-full text-sm">
+          Vegetables
+        </a>
+        <a routerLink="/search?category=Dairy"
+           class="bg-[#2A9D8F]/10 hover:bg-[#2A9D8F]/20 text-[#2A9D8F] px-3 py-1 rounded-full text-sm">
+          Dairy
+        </a>
+        <a routerLink="/search?category=Bakery"
+           class="bg-[#2A9D8F]/10 hover:bg-[#2A9D8F]/20 text-[#2A9D8F] px-3 py-1 rounded-full text-sm">
+          Bakery
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

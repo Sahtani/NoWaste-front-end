@@ -107,12 +107,10 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-    console.log(`${imagePath}`);
 
     if (imagePath.startsWith('/api/')) {
 
       const path = imagePath.startsWith('/api/') ? imagePath.substring(4) : imagePath;
-      console.log(`${environment.apiUrlDash}${path}`);
       return `${environment.apiUrlDash}${path}`;
     }
 

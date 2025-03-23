@@ -9,6 +9,11 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   {
+    path: 'profile',
+    loadComponent: () => import('./features/profile/user-profile/user-profile.component').then(c => c.UserProfileComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'announcements',
     component: AnnouncementsDashboardComponent,
     canActivate: [authGuard],
