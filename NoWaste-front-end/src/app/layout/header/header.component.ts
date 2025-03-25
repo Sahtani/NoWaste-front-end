@@ -1,16 +1,17 @@
 import {Component, Output, EventEmitter, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../../core/services/authentication/auth.service';
-import {User} from '../../core/models/user/user.model';
+import {Roles, User} from '../../core/models/user/user.model';
 import {Subject} from 'rxjs';
-import {RouterLinkActive} from '@angular/router';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {FormsModule} from '@angular/forms';
+import console from 'node:console';
 
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLinkActive, FormsModule],
+  imports: [CommonModule, RouterLinkActive, FormsModule, RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
@@ -31,27 +32,55 @@ export class HeaderComponent {
   @Output() onLogout = new EventEmitter<void>();
   @Input() isLoggedIn = false;
 
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.updateUserState();
-    console.table(this.authService.getCurrentUser());
+    const basicUser = this.authService.getCurrentUser();
+
+    if (basicUser && basicUser.id) {
+      this.authService.getUserById(basicUser.id).subscribe({
+        next: (user) => {
+          this.currentUser = user;
+          this.updateUserState();
+          console.log('Profil utilisateur chargé et état mis à jour:', user);
+          console.log('role',user.role);
+        },
+        error: (error) => {
+          console.error('Erreur lors du chargement du profil:', error);
+          this.currentUser = basicUser;
+          this.updateUserState();
+        }
+      });
+    } else {
+      this.currentUser = null;
+      this.updateUserState();
+      console.log('Aucun utilisateur connecté ou ID non disponible');
+    }
   }
 
   updateUserState(): void {
-    this.currentUser = this.authService.getCurrentUser();
     if (this.currentUser) {
-      const roles = this.currentUser.role || [];
-      this.isDonor = Array.isArray(roles) ? roles.includes('DONOR') : roles === 'DONOR';
-      this.isBenefiter = Array.isArray(roles) ? roles.includes('BENEFITER') : roles === 'BENEFITER';
-      this.isAdmin = Array.isArray(roles) ? roles.includes('ADMIN') : roles === 'ADMIN';
+      const role = this.currentUser.role || '';
+      this.isDonor =
+        role === Roles.DONOR ||
+        role === 'ROLE_' + Roles.DONOR ||
+        (Array.isArray(role) && (role.includes(Roles.DONOR) || role.includes('ROLE_' + Roles.DONOR)));
+
+      this.isBenefiter =
+        role === Roles.BENEFICIARY ||
+        role === 'ROLE_' + Roles.BENEFICIARY ||
+        (Array.isArray(role) && (role.includes(Roles.BENEFICIARY) || role.includes('ROLE_' + Roles.BENEFICIARY)));
+
+      this.isAdmin =
+        role === Roles.ADMIN ||
+        role === 'ROLE_' + Roles.ADMIN ||
+        (Array.isArray(role) && (role.includes(Roles.ADMIN) || role.includes('ROLE_' + Roles.ADMIN)));
     } else {
       this.isDonor = false;
       this.isBenefiter = false;
       this.isAdmin = false;
     }
   }
-
   toggleSearchBar(): void {
     this.showSearchBar = !this.showSearchBar;
     if (!this.showSearchBar) {
@@ -97,7 +126,10 @@ export class HeaderComponent {
   closeDropdowns(): void {
     this.showProfileDropdown = false;
   }
+  navigateToProfile(): void {
+    this.router.navigate(['/profile']);
+  }
 
-
+  protected readonly console = console;
 }
 

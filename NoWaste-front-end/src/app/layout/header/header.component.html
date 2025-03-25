@@ -1,8 +1,8 @@
-<!-- navbar.component.html -->
+
 <header class="sticky top-0 z-40 bg-white shadow-sm" (click)="closeDropdowns()">
   <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row justify-between items-center py-4 gap-4">
-      <!-- Logo -->
+
       <div class="flex items-center">
         <a routerLink="/" class="flex items-center gap-2 cursor-pointer">
           <div class="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#2A9D8F] to-[#4CAF50] flex justify-center items-center shadow-sm">
@@ -14,7 +14,7 @@
         </a>
       </div>
 
-      <!-- Main navigation -->
+
       <nav class="hidden md:flex items-center space-x-6">
         <a routerLink="/announcements"
            routerLinkActive="text-[#2A9D8F] after:w-full"
@@ -59,16 +59,13 @@
         </button>
       </nav>
 
-      <!-- Auth buttons and profile -->
       <div class="flex items-center gap-3">
-        <!-- Add announcement button -->
         <a *ngIf="authService.isAuthenticated()"
            routerLink="/announcements/new"
            class="bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors hidden md:block">
           Add Announcement
         </a>
 
-        <!-- Login/Register buttons -->
         <div *ngIf="!authService.isAuthenticated()" class="flex space-x-2">
           <button (click)="login()"
                   class="border border-[#2A9D8F] text-[#2A9D8F] hover:bg-[#2A9D8F]/5 px-4 py-2 rounded-lg font-medium transition-colors">
@@ -80,7 +77,6 @@
           </button>
         </div>
 
-        <!-- Profile dropdown -->
         <div *ngIf="authService.isAuthenticated()" class="relative">
           <button (click)="toggleProfileDropdown($event)"
                   class="flex items-center text-sm rounded-full focus:outline-none">
@@ -93,7 +89,6 @@
             </div>
           </button>
 
-          <!-- Profile dropdown menu -->
           <div *ngIf="showProfileDropdown"
                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden z-50"
                (click)="$event.stopPropagation()">
@@ -103,10 +98,12 @@
             </div>
 
             <div class="py-1">
-              <a routerLink="/profile"
-                 class="block cursor-pointer px-4 py-2 text-sm text-[#264653] hover:bg-gray-100">
-                Your Profile
-              </a>
+              <a routerLink="/profile" [queryParams]="{id: currentUser?.id}"
+                                 routerLinkActive="bg-gray-100 font-medium"
+                                 [routerLinkActiveOptions]="{exact: true}"
+                                 class="block cursor-pointer px-4 py-2 text-sm text-[#264653] hover:bg-gray-100">
+              Your Profile
+            </a>
               <a routerLink="/settings"
                  class="block px-4 py-2 text-sm text-[#264653] hover:bg-gray-100">
                 Settings

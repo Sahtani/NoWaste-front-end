@@ -8,7 +8,7 @@ export interface User {
   location?: string;
   bio?: string;
   avatar?: string;
-  role: string[];
+  role: Roles;
   createdAt: string;
 }
 

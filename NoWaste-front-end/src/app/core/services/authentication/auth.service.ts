@@ -66,6 +66,10 @@ export class AuthService {
       );
   }
 
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${environment.apiUrl}${id}`);
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem('user_info');
@@ -97,7 +101,7 @@ export class AuthService {
       return this.currentUserCache;
     }
 
-    const token = localStorage.getItem(this.tokenKey);
+    const token = localStorage.getItem('auth_token');
     if (!token) {
       return null;
     }
