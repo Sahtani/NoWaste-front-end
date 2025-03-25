@@ -5,11 +5,12 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  location?: string;
+  address?: string;
   bio?: string;
   avatar?: string;
   role: Roles;
   createdAt: string;
+  lastLogin: string
 }
 
 export interface UserStats {
