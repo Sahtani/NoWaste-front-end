@@ -1,0 +1,76 @@
+<app-notification></app-notification>
+<app-header
+  (onLogin)="handleLogin()"
+  (onSignup)="handleSignup()"
+  (onLogout)="handleLogout()">
+</app-header>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-gradient-to-r from-[#2A9D8F] to-[#264653] p-6">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <app-profile-avatar
+          [currentAvatar]="user?.avatar"
+          (avatarUpdated)="handleAvatarUpdate($event)">
+        </app-profile-avatar>
+        <div class="text-white">
+          <h1 class="text-2xl font-bold">{{ user?.name || 'Loading...' }}</h1>
+          <p class="opacity-80">{{ user?.email }}</p>
+          <div class="flex items-center gap-2 mt-2">
+            <span
+                  class="bg-white/20 text-white text-xs rounded-full px-3 py-1">
+              {{ user?.role }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex">
+        <button
+          [ngClass]="activeTab === 'info' ? 'border-[#2A9D8F] text-[#2A9D8F]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="py-4 px-6 border-b-2 font-medium text-sm"
+          (click)="switchTab('info')">
+          Profile Information
+        </button>
+        <button
+          [ngClass]="activeTab === 'edit' ? 'border-[#2A9D8F] text-[#2A9D8F]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="py-4 px-6 border-b-2 font-medium text-sm"
+          (click)="switchTab('edit')">
+          Edit Profile
+        </button>
+        <button
+          [ngClass]="activeTab === 'stats' ? 'border-[#2A9D8F] text-[#2A9D8F]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="py-4 px-6 border-b-2 font-medium text-sm"
+          (click)="switchTab('stats')">
+          Statistics
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-6">
+      <div *ngIf="isLoading" class="flex justify-center py-10">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-[#2A9D8F]"></div>
+      </div>
+
+      <ng-container *ngIf="!isLoading && user">
+        <app-profile-info
+          *ngIf="activeTab === 'info'"
+          [user]="user">
+        </app-profile-info>
+
+        <app-profile-edit
+          *ngIf="activeTab === 'edit'"
+          [user]="user"
+          (profileUpdated)="handleProfileUpdate($event)">
+        </app-profile-edit>
+
+        <app-profile-stats
+          *ngIf="activeTab === 'stats'"
+          [userId]=user.id>
+        </app-profile-stats>
+      </ng-container>
+    </div>
+  </div>
+</div>

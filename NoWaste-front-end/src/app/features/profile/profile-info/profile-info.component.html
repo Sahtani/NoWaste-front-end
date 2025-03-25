@@ -1,0 +1,73 @@
+
+<div class="max-w-2xl">
+  <h2 class="text-xl font-semibold text-[#264653] mb-6 flex items-center">
+    <i class="fas fa-user-circle mr-2"></i> Profile Information
+  </h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+      <h3 class="text-sm font-medium text-gray-500 flex items-center">
+        <i class="fas fa-user mr-2 text-[#2A9D8F]"></i> Full Name
+      </h3>
+      <p class="mt-1 text-[#264653] font-medium">{{ user?.name || 'Not provided' }}</p>
+    </div>
+
+    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+      <h3 class="text-sm font-medium text-gray-500 flex items-center">
+        <i class="fas fa-envelope mr-2 text-[#2A9D8F]"></i> Email
+      </h3>
+      <p class="mt-1 text-[#264653] font-medium">{{ user?.email || 'Not provided' }}</p>
+    </div>
+
+    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+      <h3 class="text-sm font-medium text-gray-500 flex items-center">
+        <i class="fas fa-phone mr-2 text-[#2A9D8F]"></i> Phone
+      </h3>
+      <p class="mt-1 text-[#264653] font-medium">{{ user?.phone || 'Not provided' }}</p>
+    </div>
+
+    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+      <h3 class="text-sm font-medium text-gray-500 flex items-center">
+        <i class="fas fa-map-marker-alt mr-2 text-[#2A9D8F]"></i> Location
+      </h3>
+      <p class="mt-1 text-[#264653] font-medium">{{ user?.address || 'Not provided' }}</p>
+    </div>
+
+    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+      <h3 class="text-sm font-medium text-gray-500 flex items-center">
+        <i class="fas fa-tag mr-2 text-[#2A9D8F]"></i> Account Type
+      </h3>
+      <p class="mt-1">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#2A9D8F]/10 text-[#2A9D8F]">
+          <i class="fas fa-user-tag mr-1"></i> {{ user?.role || 'Not specified' }}
+        </span>
+      </p>
+    </div>
+
+    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+      <h3 class="text-sm font-medium text-gray-500 flex items-center">
+        <i class="fas fa-calendar-alt mr-2 text-[#2A9D8F]"></i> Member Since
+      </h3>
+      <p class="mt-1 text-[#264653] font-medium">
+        {{ user?.createdAt ? (user?.createdAt | date:'mediumDate') : 'Not available' }}
+      </p>    </div>
+
+    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+      <h3 class="text-sm font-medium text-gray-500 flex items-center">
+        <i class="fas fa-clock mr-2 text-[#2A9D8F]"></i> Last Login
+      </h3>
+      <p class="mt-1 text-[#264653] font-medium">
+        {{ user?.lastLogin ? (user?.lastLogin | date:'medium') : 'Not available' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-6 bg-gray-50 p-4 rounded-lg shadow-sm">
+    <h3 class="text-sm font-medium text-gray-500 flex items-center">
+      <i class="fas fa-info-circle mr-2 text-[#2A9D8F]"></i> Bio
+    </h3>
+    <p class="mt-1 text-[#264653] leading-relaxed">
+      {{ user?.bio || 'No bio provided' }}
+    </p>
+  </div>
+</div>
