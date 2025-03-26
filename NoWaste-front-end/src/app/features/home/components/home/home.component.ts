@@ -51,28 +51,29 @@ export class HomeComponent {
     this.hideLoginModal();
 
     if (!response || !response.role) {
-      this.router.navigate(['/announcements']);
+      console.log("ana hna ");
+      this.router.navigate(['/']);
       return;
     }
     if (Array.isArray(response.role)) {
       if (response.role.includes('DONOR')) {
-        this.router.navigate(['/announcements']);
+        this.router.navigate(['/donor/dashboard']);
       } else if (response.role.includes('BENEFICIARY')) {
         this.router.navigate(['/beneficiary-dashboard']);
       } else if (response.role.includes('ADMIN')) {
         this.router.navigate(['/admin-dashboard']);
       } else {
-        this.router.navigate(['/announcements']);
+        this.router.navigate(['/']);
       }
     } else {
       if (response.role === 'DONOR') {
-        this.router.navigate(['/announcements']);
+        this.router.navigate(['/donor/dashboard']);
       } else if (response.role === 'BENEFICIARY') {
         this.router.navigate(['/beneficiary-dashboard']);
       } else if (response.role === 'ADMIN') {
         this.router.navigate(['/admin-dashboard']);
       } else {
-        this.router.navigate(['/announcements']);
+        this.router.navigate(['/']);
       }
     }
   }

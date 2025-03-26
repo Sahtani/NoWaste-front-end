@@ -328,7 +328,6 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/announcements', announcement.id]);
   }
   refreshAnnouncements(): void {
-    // Forcer une nouvelle requête
     this.announcementService.refreshAnnouncements().subscribe({
       next: (data) => {
         this.announcements = data;

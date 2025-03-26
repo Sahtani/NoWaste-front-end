@@ -2,10 +2,8 @@ import {Component, Output, EventEmitter, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../../core/services/authentication/auth.service';
 import {Roles, User} from '../../core/models/user/user.model';
-import {Subject} from 'rxjs';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import console from 'node:console';
 
 
 @Component({

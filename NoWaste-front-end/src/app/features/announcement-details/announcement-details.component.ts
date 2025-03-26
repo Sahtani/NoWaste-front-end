@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {finalize} from 'rxjs/operators';
 import {CurrencyPipe, DatePipe, Location, NgClass, NgForOf, NgIf} from '@angular/common';
 import {AnnouncementService} from '../../core/services/announcement/announcement.service';
 import {Announcement} from '../../core/models/announcement/announcement.model';
 import {AuthService} from '../../core/services/authentication/auth.service';
 import {AnnouncementDetails} from '../../core/models/announcement-details.model';
 import {environment} from '../../../environments/environment';
+import {HeaderComponent} from '../../layout/header/header.component';
+import {NotificationComponent} from '../notification/notification.component';
 
 @Component({
   selector: 'app-announcement-details',
@@ -16,7 +18,9 @@ import {environment} from '../../../environments/environment';
     NgClass,
     NgForOf,
     DatePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    HeaderComponent,
+    NotificationComponent
   ],
   styleUrls: ['./announcement-details.component.css']
 })
@@ -42,7 +46,7 @@ export class AnnouncementDetailsComponent implements OnInit {
         this.announcementId = id;
         this.loadAnnouncementDetails();
       } else {
-        this.router.navigate(['/announcements']);
+        this.router.navigate(['/donor/dashboard']);
       }
     });
   }
@@ -114,6 +118,19 @@ export class AnnouncementDetailsComponent implements OnInit {
     }
 
     return `${environment.apiUrlDash}${imagePath}`;
+  }
+
+  handleLogin(): void {
+    // Implement login logic
+  }
+
+  handleSignup(): void {
+    // Implement signup logic
+  }
+
+  handleLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 }
 

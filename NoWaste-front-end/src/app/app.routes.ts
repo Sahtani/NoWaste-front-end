@@ -14,13 +14,21 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'announcements',
+    path: 'donor/dashboard',
     component: AnnouncementsDashboardComponent,
     canActivate: [authGuard],
     data: {
-      roles: ['DONOR', 'beneficiary']
+      roles: ['DONOR']
     }
   },
+/*  {
+    path: 'announcements',
+    component: AnnouncementsListComponent,
+    canActivate: [authGuard],
+    data: {
+      roles: ['DONOR', 'BENEFICIARY']
+    }
+  },*/
   {
     path: 'announcements/:id',
     component: AnnouncementDetailsComponent,

@@ -52,6 +52,7 @@ export class AuthService {
             localStorage.setItem('expirationDate', expirationDate.toISOString());
 
             let userInfo: any = {};
+            userInfo.name = response.name;
             userInfo.email = response.email;
             userInfo.role = response.role;
 
