@@ -1,9 +1,9 @@
-
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../../core/services/notification/notification.service';
 import { finalize } from 'rxjs';
-import {UserProfileService} from '../../../core/services/user/user-profile.service';
 import {UserStats} from '../../../core/models/user/user.model';
+import {UserStatsService} from '../../../core/services/user/user-stats.service';
 
 @Component({
   selector: 'app-profile-stats',
@@ -13,28 +13,37 @@ import {UserStats} from '../../../core/models/user/user.model';
   styleUrls: ['./profile-stats.component.css']
 })
 export class ProfileStatsComponent implements OnInit {
-  @Input() userId!: number;
+  @Input() userId: number | null = null;
 
-  stats: UserStats | null = null;
+  userStats: UserStats | null = null;
   isLoading = false;
 
-  constructor(private userProfileService: UserProfileService) {}
+  constructor(
+    private userStatsService: UserStatsService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
-    this.loadUserStats();
+    this.loadStats();
   }
 
-  loadUserStats(): void {
+  loadStats(): void {
+    if (!this.userId) {
+      this.notificationService.error('User ID is required to load statistics');
+      return;
+    }
+
     this.isLoading = true;
 
-    this.userProfileService.getUserStats()
+    this.userStatsService.getUserStats(this.userId)
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
-        next: (stats) => {
-          this.stats = stats;
+        next: (stats: UserStats | null) => {
+          this.userStats = stats;
         },
-        error: (error) => {
-          console.error('Error loading user stats:', error);
+        error: (error: any) => {
+          console.error('Error loading user statistics:', error);
+          this.notificationService.error('Failed to load user statistics');
         }
       });
   }

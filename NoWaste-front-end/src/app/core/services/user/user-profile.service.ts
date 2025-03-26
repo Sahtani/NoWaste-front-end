@@ -32,8 +32,9 @@ export class UserProfileService {
   }
 
   getUserStats(): Observable<UserStats> {
-    return this.http.get<UserStats>(`${environment.apiUrl}/users/stats`);
+    return this.http.get<UserStats>(`${environment.apiUrl}stats`);
   }
+
   getCurrentUserProfile(): User | null {
     return this.userProfileSubject.value;
   }

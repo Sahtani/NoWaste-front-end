@@ -15,7 +15,9 @@ export interface User {
 
 export interface UserStats {
   totalDonations: number;
+  totalCollections:number;
   activeListings: number;
+  averageRating: number;
   itemsReceived: number;
   rating: number;
   impactMetrics: {
