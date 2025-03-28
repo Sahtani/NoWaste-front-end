@@ -10,24 +10,92 @@
   <div *ngIf="!isLoading && userStats">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <div class="bg-[#264653]/5 p-4 rounded-lg">
-        <h3 class="text-[#264653]/70 text-sm font-medium">Total Donations</h3>
-        <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.totalDonations || 0 }}</p>
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-[#264653]/70 text-sm font-medium">My Rating</h3>
+            <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.averageRating ? (userStats.averageRating | number:'1.1-1') : 0 }}/5</p>
+          </div>
+          <div class="bg-[#2A9D8F]/10 p-3 rounded-full">
+            <i class="fas fa-star text-[#2A9D8F]"></i>
+          </div>
+        </div>
       </div>
 
-      <div class="bg-[#264653]/5 p-4 rounded-lg">
-        <h3 class="text-[#264653]/70 text-sm font-medium">Active Listings</h3>
-        <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.activeListings || 0 }}</p>
-      </div>
+      <ng-container *ngIf="isDonor">
+        <div class="bg-[#264653]/5 p-4 rounded-lg">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-[#264653]/70 text-sm font-medium">Total Donations</h3>
+              <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.totalDonations || 0 }}</p>
+            </div>
+            <div class="bg-[#2A9D8F]/10 p-3 rounded-full">
+              <i class="fas fa-hand-holding-heart text-[#2A9D8F]"></i>
+            </div>
+          </div>
+        </div>
 
-      <div class="bg-[#264653]/5 p-4 rounded-lg">
-        <h3 class="text-[#264653]/70 text-sm font-medium">Total Collections</h3>
-        <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.totalCollections || 0 }}</p>
-      </div>
+        <div class="bg-[#264653]/5 p-4 rounded-lg">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-[#264653]/70 text-sm font-medium">Active Listings</h3>
+              <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.activeListings || 0 }}</p>
+            </div>
+            <div class="bg-[#2A9D8F]/10 p-3 rounded-full">
+              <i class="fas fa-list-alt text-[#2A9D8F]"></i>
+            </div>
+          </div>
+        </div>
 
-      <div class="bg-[#264653]/5 p-4 rounded-lg">
-        <h3 class="text-[#264653]/70 text-sm font-medium">Rating</h3>
-        <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.averageRating ? (userStats.averageRating | number:'1.1-1') : 0 }}/5</p>
-      </div>
+        <div class="bg-[#264653]/5 p-4 rounded-lg">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-[#264653]/70 text-sm font-medium">Completed Donations</h3>
+              <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.completedDonations || 0 }}</p>
+            </div>
+            <div class="bg-[#2A9D8F]/10 p-3 rounded-full">
+              <i class="fas fa-check-circle text-[#2A9D8F]"></i>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="isBeneficiary">
+        <div class="bg-[#264653]/5 p-4 rounded-lg">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-[#264653]/70 text-sm font-medium">Reserved Items</h3>
+              <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.activeReservations || 0 }}</p>
+            </div>
+            <div class="bg-[#2A9D8F]/10 p-3 rounded-full">
+              <i class="fas fa-bookmark text-[#2A9D8F]"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#264653]/5 p-4 rounded-lg">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-[#264653]/70 text-sm font-medium">Total Collections</h3>
+              <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.totalCollections || 0 }}</p>
+            </div>
+            <div class="bg-[#2A9D8F]/10 p-3 rounded-full">
+              <i class="fas fa-box-open text-[#2A9D8F]"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#264653]/5 p-4 rounded-lg">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-[#264653]/70 text-sm font-medium">Completed Reservation </h3>
+              <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.completedReservations || 0 }}</p>
+            </div>
+            <div class="bg-[#2A9D8F]/10 p-3 rounded-full">
+              <i class="fas fa-check-double text-[#2A9D8F]"></i>
+            </div>
+          </div>
+        </div>
+      </ng-container>
     </div>
 
     <h3 class="text-lg font-medium text-[#264653] mb-4 flex items-center">
@@ -36,27 +104,40 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
       <div class="bg-[#264653]/5 p-4 rounded-lg">
-        <h3 class="text-[#264653]/70 text-sm font-medium">Food Waste Prevented</h3>
-      <!--  <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.savedFoodWeight || 0 }} kg</p>-->
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-[#264653]/70 text-sm font-medium">Food Waste Prevented</h3>
+   <!--         <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.savedFoodWeight || 0 }} kg</p>-->
+          </div>
+          <div class="bg-green-100 p-3 rounded-full">
+            <i class="fas fa-apple-alt text-green-600"></i>
+          </div>
+        </div>
       </div>
 
       <div class="bg-[#264653]/5 p-4 rounded-lg">
-        <h3 class="text-[#264653]/70 text-sm font-medium">CO2 Emissions Saved</h3>
-       <!-- <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.co2Saved || 0 }} kg</p>-->
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-[#264653]/70 text-sm font-medium">CO2 Emissions Saved</h3>
+         <!--   <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.co2Saved || 0 }} kg</p>-->
+          </div>
+          <div class="bg-blue-100 p-3 rounded-full">
+            <i class="fas fa-cloud text-blue-600"></i>
+          </div>
+        </div>
       </div>
 
       <div class="bg-[#264653]/5 p-4 rounded-lg">
-        <h3 class="text-[#264653]/70 text-sm font-medium">Water Saved</h3>
-       <!-- <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.waterSaved || 0 }} L</p>-->
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-[#264653]/70 text-sm font-medium">Water Saved</h3>
+        <!--    <p class="text-2xl font-bold text-[#2A9D8F]">{{ userStats.waterSaved || 0 }} L</p>-->
+          </div>
+          <div class="bg-cyan-100 p-3 rounded-full">
+            <i class="fas fa-tint text-cyan-600"></i>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <!-- Si vous avez des données d'activité récente, sinon vous pouvez supprimer cette section -->
-    <div *ngIf="false" class="bg-[#264653]/5 p-6 rounded-lg">
-      <h3 class="text-lg font-medium text-[#264653] mb-4 flex items-center">
-        <i class="fas fa-history mr-2"></i> Recent Activity
-      </h3>
-      <p class="text-center text-[#264653]/70 py-4">Activity data not available</p>
     </div>
   </div>
 

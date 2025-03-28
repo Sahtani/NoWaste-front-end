@@ -64,7 +64,7 @@
           </svg>
         </div>
         <div>
-          <p class="text-[#264653] font-medium">{{ announcement.user?.name || 'Anonymous' }}</p>
+          <p class="text-[#264653] font-medium">{{ announcement.donor?.name || 'Anonymous' }}</p>
           <p class="text-[#264653]/60 text-sm">Posted on {{ announcement.postedDate | date:'medium' }}</p>
         </div>
       </div>
@@ -114,7 +114,8 @@
       </div>
 
       <div class="flex gap-4 mt-6">
-        <button *ngIf="!isOwner(announcement)"
+        <!-- Contact Seller Button for Beneficiaries -->
+        <button *ngIf="isAuthenticated && isBeneficiary"
                 class="flex-1 bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white font-medium py-3 px-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -123,16 +124,47 @@
           Contact Seller
         </button>
 
-        <button *ngIf="!isOwner(announcement)"
+        <button *ngIf="isAuthenticated && isBeneficiary && !hasMarkedInterest"
+                (click)="markInterest()"
+                [disabled]="isLoading"
                 class="flex-1 bg-[#E76F51] hover:bg-[#E76F51]/90 text-white font-medium py-3 px-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
           </svg>
-          I'm Interested
+          Reserve Item
         </button>
 
-        <div *ngIf="isOwner(announcement)" class="flex w-full gap-4">
+        <button *ngIf="isAuthenticated && isBeneficiary && hasMarkedInterest"
+                [disabled]="true"
+                class="flex-1 bg-gray-200 text-gray-600 font-medium py-3 px-6 rounded-xl shadow-sm flex items-center justify-center gap-2 cursor-not-allowed">
+          <svg class="w-5 h-5" fill="currentColor" stroke="none" viewBox="0 0 24 24">
+            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+          Reservation Pending
+        </button>
+        <button (click)="cancelInterest(announcementId)"
+                [disabled]="isLoading"
+                class="bg-red-100 hover:bg-red-200 text-red-600 font-medium py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          Cancel
+        </button>
+
+        <button *ngIf="!isAuthenticated"
+                (click)="handleLogin()"
+                class="flex-1 bg-[#E76F51] hover:bg-[#E76F51]/90 text-white font-medium py-3 px-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+          </svg>
+          Please log in to continue
+        </button>
+
+        <!-- Owner Actions (Edit and Delete) -->
+        <div *ngIf="isOwner(announcement) && isAuthenticated" class="flex w-full gap-4">
           <button (click)="openEditAnnouncementModal(announcement)"
                   class="flex-1 bg-[#2A9D8F]/10 hover:bg-[#2A9D8F]/20 text-[#2A9D8F] font-medium py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,18 +190,31 @@
   </div>
 
   <div *ngIf="details" class="border-t border-gray-100 p-4">
-    <div *ngIf="details.interestedUsers && details.interestedUsers.length > 0" class="mb-6">
+    <div *ngIf="details.interestedUsers && details.interestedUsers.length > 0 && isDonor" class="mb-6">
       <h2 class="text-xl font-semibold text-[#264653] mb-4">Interested People</h2>
       <div class="flex flex-wrap gap-3">
         <div *ngFor="let user of details.interestedUsers"
-             class="flex items-center bg-gray-50 p-3 rounded-lg">
-          <div class="w-8 h-8 rounded-full bg-[#264653]/10 flex items-center justify-center mr-3">
-            <svg class="w-5 h-5 text-[#264653]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
+             class="flex items-center justify-between bg-gray-50 p-3 rounded-lg w-full md:w-auto md:min-w-[250px]">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-[#264653]/10 flex items-center justify-center mr-3">
+              <svg class="w-5 h-5 text-[#264653]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+            <span class="text-[#264653]">{{ user.name }}</span>
           </div>
-          <span class="text-[#264653]">{{ user.name }}</span>
+
+          <button *ngIf="announcement && user && announcement.id && user.id"
+                  (click)="approveInterest(announcement.id, user.id)"
+                  [disabled]="isLoading || announcement?.beneficiary?.id === user.id"
+                  class="ml-4 px-3 py-1 rounded-lg text-xs font-medium"
+                  [ngClass]="{
+          'bg-green-500 hover:bg-green-600 text-white': announcement?.beneficiary?.id !== user.id,
+          'bg-gray-100 text-gray-500 cursor-not-allowed': announcement?.beneficiary?.id === user.id
+        }">
+            {{ announcement?.beneficiary?.id === user.id ? 'Approved' : 'Approve' }}
+          </button>
         </div>
       </div>
     </div>
@@ -185,8 +230,8 @@
           <div class="p-3">
             <h3 class="font-medium text-[#264653]">{{ item.name }}</h3>
             <p class="text-sm text-[#264653]/70">{{ item.price ? (item.price | currency) : 'Free' }}</p>
-            <button
-              class="w-full mt-2 bg-[#2A9D8F]/10 hover:bg-[#2A9D8F]/20 text-[#2A9D8F] text-sm font-medium py-2 rounded-lg transition-all">
+            <button [routerLink]="['/announcements', item.id]"
+                    class="w-full mt-2 bg-[#2A9D8F]/10 hover:bg-[#2A9D8F]/20 text-[#2A9D8F] text-sm font-medium py-2 rounded-lg transition-all">
               View Details
             </button>
           </div>

@@ -4,6 +4,8 @@ import {AuthService} from '../../core/services/authentication/auth.service';
 import {Roles, User} from '../../core/models/user/user.model';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {FormsModule} from '@angular/forms';
+import {NotificationData} from '../../core/models/notification.model';
+import {determineUserRoles} from '../../core/utils/role-utils';
 
 
 @Component({
@@ -16,8 +18,12 @@ import {FormsModule} from '@angular/forms';
 export class HeaderComponent {
   currentUser: User | null = null;
   isDonor = false;
-  isBenefiter = false;
+  isBeneficiary = false;
   isAdmin = false;
+
+  notifications: NotificationData[] = [];
+  unreadNotificationsCount = 0;
+  showNotifications = false;
 
   searchQuery = '';
   showSearchBar = false;
@@ -40,8 +46,6 @@ export class HeaderComponent {
         next: (user) => {
           this.currentUser = user;
           this.updateUserState();
-          console.log('Profil utilisateur chargé et état mis à jour:', user);
-          console.log('role',user.role);
         },
         error: (error) => {
           console.error('Erreur lors du chargement du profil:', error);
@@ -57,27 +61,10 @@ export class HeaderComponent {
   }
 
   updateUserState(): void {
-    if (this.currentUser) {
-      const role = this.currentUser.role || '';
-      this.isDonor =
-        role === Roles.DONOR ||
-        role === 'ROLE_' + Roles.DONOR ||
-        (Array.isArray(role) && (role.includes(Roles.DONOR) || role.includes('ROLE_' + Roles.DONOR)));
-
-      this.isBenefiter =
-        role === Roles.BENEFICIARY ||
-        role === 'ROLE_' + Roles.BENEFICIARY ||
-        (Array.isArray(role) && (role.includes(Roles.BENEFICIARY) || role.includes('ROLE_' + Roles.BENEFICIARY)));
-
-      this.isAdmin =
-        role === Roles.ADMIN ||
-        role === 'ROLE_' + Roles.ADMIN ||
-        (Array.isArray(role) && (role.includes(Roles.ADMIN) || role.includes('ROLE_' + Roles.ADMIN)));
-    } else {
-      this.isDonor = false;
-      this.isBenefiter = false;
-      this.isAdmin = false;
-    }
+    const roles = determineUserRoles(this.currentUser);
+    this.isDonor = roles.isDonor;
+    this.isBeneficiary = roles.isBeneficiary;
+    this.isAdmin = roles.isAdmin;
   }
   toggleSearchBar(): void {
     this.showSearchBar = !this.showSearchBar;
@@ -128,6 +115,46 @@ export class HeaderComponent {
     this.router.navigate(['/profile']);
   }
 
-  protected readonly console = console;
+  toggleNotifications(event: Event): void {
+    event.stopPropagation();
+    this.showNotifications = !this.showNotifications;
+    if (this.showNotifications) {
+      this.loadNotifications();
+    }
+  }
+
+  loadNotifications(): void {
+
+    this.notifications = [
+        {
+          type: 'success',
+          message: 'New reservation for your donation "Fresh Vegetables"',
+          time: new Date(),
+          read: false,
+          icon: 'check-circle'
+        },
+        {
+          type: 'info',
+          message: 'Your pickup is scheduled for tomorrow at 2pm',
+          time: new Date(Date.now() - 3600000),
+          read: true,
+          icon: 'info-circle'
+        }
+    ];
+    this.unreadNotificationsCount = this.notifications.filter(n => !n.read).length;
+  }
+
+  markAllAsRead(): void {
+    // Appeler votre service ici puis mettre à jour l'UI
+    this.notifications.forEach(n => n.read = true);
+    this.unreadNotificationsCount = 0;
+  }
+
+  handleNotificationClick(notification: any): void {
+    // Marquer comme lue et naviguer si nécessaire
+    notification.read = true;
+    this.unreadNotificationsCount = this.notifications.filter(n => !n.read).length;
+    // Naviguer en fonction du type, etc.
+  }
 }
 

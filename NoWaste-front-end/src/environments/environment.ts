@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:8080/api/users/',
-  apiUrlDash: 'http://localhost:8080/api'
+  apiUrlDash: 'http://localhost:8080/api',
 };

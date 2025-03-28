@@ -19,6 +19,9 @@ export interface UserStats {
   activeListings: number;
   averageRating: number;
   itemsReceived: number;
+  completedDonations: number;
+  completedReservations: number;
+  activeReservations: number;
   rating: number;
   impactMetrics: {
     wasteReduced: number;

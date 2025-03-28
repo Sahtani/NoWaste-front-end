@@ -10,5 +10,6 @@ export interface Announcement {
   status?: AnnouncementStatus;
   rejectionReason?: string;
   products: Product[];
-  user?: User;
+  donor?: User;
+  beneficiary?: User;
 }

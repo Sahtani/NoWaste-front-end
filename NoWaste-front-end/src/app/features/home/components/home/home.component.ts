@@ -7,6 +7,7 @@ import {LoginComponent} from '../../../auth/login/login.component';
 import {RegisterComponent} from '../../../auth/register/register.component';
 import {AuthenticationResponse} from '../../../../core/models/authentication-response';
 import {AuthService} from '../../../../core/services/authentication/auth.service';
+import {Roles} from '../../../../core/models/user/user.model';
 
 @Component({
   selector: 'app-home',
@@ -51,26 +52,41 @@ export class HomeComponent {
     this.hideLoginModal();
 
     if (!response || !response.role) {
-      console.log("ana hna ");
       this.router.navigate(['/']);
       return;
     }
+    // Convertir la réponse du backend en format compatible avec l'enum Roles
+    const convertBackendRole = (backendRole: string): Roles | null => {
+      // Supprimer le préfixe "ROLE_" et vérifier si le résultat correspond à une valeur de l'enum
+      const roleName = backendRole.replace('ROLE_', '');
+      if (Object.values(Roles).includes(roleName as Roles)) {
+        return roleName as Roles;
+      }
+      return null;
+    };
+
     if (Array.isArray(response.role)) {
-      if (response.role.includes('DONOR')) {
-        this.router.navigate(['/donor/dashboard']);
-      } else if (response.role.includes('BENEFICIARY')) {
-        this.router.navigate(['/beneficiary-dashboard']);
-      } else if (response.role.includes('ADMIN')) {
+      const roles = response.role
+        .map(role => convertBackendRole(role))
+        .filter(role => role !== null) as Roles[];
+
+      if (roles.includes(Roles.DONOR)) {
+        this.router.navigate(['/profile']);
+      } else if (roles.includes(Roles.BENEFICIARY)) {
+        this.router.navigate(['/profile']);
+      } else if (roles.includes(Roles.ADMIN)) {
         this.router.navigate(['/admin-dashboard']);
       } else {
         this.router.navigate(['/']);
       }
     } else {
-      if (response.role === 'DONOR') {
-        this.router.navigate(['/donor/dashboard']);
-      } else if (response.role === 'BENEFICIARY') {
-        this.router.navigate(['/beneficiary-dashboard']);
-      } else if (response.role === 'ADMIN') {
+      const role = convertBackendRole(response.role);
+
+      if (role === Roles.DONOR) {
+        this.router.navigate(['/profile']);
+      } else if (role === Roles.BENEFICIARY) {
+        this.router.navigate(['/profile']);
+      } else if (role === Roles.ADMIN) {
         this.router.navigate(['/admin-dashboard']);
       } else {
         this.router.navigate(['/']);

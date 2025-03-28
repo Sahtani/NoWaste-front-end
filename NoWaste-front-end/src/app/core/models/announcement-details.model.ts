@@ -1,19 +1,19 @@
-export interface AnnouncementDetails {
-  // Propriétés de base de l'annonce
-  id: string;
-  userId: string;         // ID de l'utilisateur/vendeur
-  userName?: string;      // Nom du vendeur/créateur de l'annonce
-  userAvatar?: string;    // URL de l'avatar du vendeur
-  userRating?: number;    // Note du vendeur (optionnel)
-  postedDate: Date;       // Date de publication
+import {User} from './user/user.model';
 
-  // Informations sur les produits
+export interface AnnouncementDetails {
+
+  id: string;
+  userId: string;
+  userName?: string;
+  userAvatar?: string;
+  userRating?: number;
+  postedDate: Date;
+
   produits: ProductDetails[];
 
-  // Informations supplémentaires
-  interestedUsers?: InterestedUser[];  // Utilisateurs intéressés
-  similarItems?: ProductDetails[];     // Articles similaires
-  contactInfo?: ContactInfo;           // Informations de contact (optionnel)
+  interestedUsers?: User[];
+  similarItems?: ProductDetails[];
+  contactInfo?: ContactInfo;
 }
 
 export interface ProductDetails {
@@ -24,10 +24,10 @@ export interface ProductDetails {
   quantity: number;
   location?: string;
   status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE' | 'EXPIRED';
-  image?: string;         // URL de l'image
-  expiryDate?: Date;      // Date d'expiration
-  category?: string;      // Catégorie du produit
-  tags?: string[];        // Tags/étiquettes associés
+  image?: string;
+  expiryDate?: Date;
+  category?: string;
+  tags?: string[];
 }
 
 export interface InterestedUser {

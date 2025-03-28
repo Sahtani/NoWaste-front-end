@@ -142,4 +142,33 @@ export class AnnouncementService {
       })
     );
   }
+
+  markInterest(announcementId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}${announcementId}/interest`, {});
+  }
+
+  approveInterest(announcementId: string | undefined, beneficiaryId: number): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}${announcementId}approve/${beneficiaryId}`,
+      {}
+    );
+  }
+
+  cancelInterest(announcementId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}${announcementId}/interest`);
+  }
+
+  getInterestedAnnouncements(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}users/${userId}/interested-announcements`);
+  }
+
+  getAnnouncementsByUserId(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}user/${userId}`).pipe(
+      catchError(error => {
+        console.error('Error fetching user announcements:', error);
+        return of([]);
+      })
+    );
+  }
+
 }

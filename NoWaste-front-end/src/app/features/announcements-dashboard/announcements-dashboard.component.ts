@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf, SlicePipe } from '@angular/common';
 import { AnnouncementRequest } from '../../core/models/announcement-request.model';
 import { environment } from '../../../environments/environment';
+import {AnnouncementStatus} from '../../core/enum/AnnouncementStatus';
 
 @Component({
   selector: 'app-announcements-dashboard',
@@ -34,15 +35,19 @@ import { environment } from '../../../environments/environment';
 })
 export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-
+  myAnnouncements: any[] = [];
   announcements: Announcement[] = [];
   filteredAnnouncements: Announcement[] = [];
+
+  isAuthenticated: boolean = false;
+  isDonor: boolean = false;
+  isBeneficiary: boolean = false;
 
   searchQuery: string = '';
   sortBy: string = 'newest';
   filterStatus: string = 'all';
   showOnlyMine: boolean = false;
-  productStatuses = ['AVAILABLE', 'RESERVED', 'UNAVAILABLE', 'EXPIRED'];
+  announcementStatus = ['PENDING', 'APPROVED', 'REJECTED', 'RESERVED'];
 
   currentPage: number = 1;
   pageSize: number = 9;
@@ -68,9 +73,34 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadAnnouncements();
-  }
+    this.isAuthenticated = this.authService.isAuthenticated();
 
+    const currentUserFromToken = this.authService.getCurrentUser();
+
+    if (this.isAuthenticated && currentUserFromToken && currentUserFromToken.id) {
+      const currentUserId: number = currentUserFromToken.id;
+
+      this.authService.getUserById(currentUserId).subscribe({
+        next: (userDetails) => {
+          this.isDonor = userDetails.role === 'DONOR';
+          this.isBeneficiary = userDetails.role === 'BENEFICIARY';
+
+          this.loadAnnouncements();
+        },
+        error: (error) => {
+          this.isDonor = currentUserFromToken.role === 'DONOR';
+          this.isBeneficiary = currentUserFromToken.role === 'BENEFICIARY';
+
+          this.loadAnnouncements();
+        }
+      });
+    } else {
+      this.isDonor = false;
+      this.isBeneficiary = false;
+
+      this.loadAnnouncements();
+    }
+  }
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -89,7 +119,6 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
           this.announcements = data;
           this.applyFilters();
           this.calculateTotalPages();
-         //  this.cdr.detectChanges();
         },
         error: (error) => {
           this.errorMessage = 'Failed to load announcements';
@@ -97,6 +126,34 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  loadMyAnnouncements(): void {
+    if (!this.isAuthenticated || !this.isDonor) {
+      return;
+    }
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+      this.notificationService.error('Unable to load your donations');
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.announcementService.getAnnouncementsByUserId(currentUser.id).subscribe({
+      next: (data) => {
+        this.myAnnouncements = data;
+        this.applyFilters();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading your donations:', error);
+        this.notificationService.error('Failed to load your donations');
+        this.isLoading = false;
+      }
+    });
+  }
+
 
 
   getImageUrl(imagePath: string | undefined): string {
@@ -116,25 +173,34 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
 
     return `${environment.apiUrlDash}${imagePath}`;
   }
+  showAllAnnouncements(): void {
+    this.showOnlyMine = false;
+    this.applyFilters();
+  }
+  showMyAnnouncements(): void {
+    this.showOnlyMine = true;
 
-
+    if (this.myAnnouncements.length === 0) {
+      this.loadMyAnnouncements();
+    } else {
+      this.applyFilters();
+    }
+  }
   applyFilters(): void {
     let filtered = [...this.announcements];
 
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(item =>
+        (item.title?.toLowerCase().includes(query)) ||
         item.products?.some(product =>
           product.name?.toLowerCase().includes(query) ||
           product.description?.toLowerCase().includes(query)
         )
       );
     }
-
     if (this.filterStatus !== 'all') {
-      filtered = filtered.filter(item =>
-        item.products?.some(product => product.status === this.filterStatus)
-      );
+      filtered = filtered.filter(item => item.status === this.filterStatus);
     }
 
     if (this.showOnlyMine) {
@@ -143,14 +209,14 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
 
     if (this.sortBy === 'newest') {
       filtered.sort((a, b) => {
-        const dateA = a.postedDate ? new Date(a.postedDate) : new Date(0);
-        const dateB = b.postedDate ? new Date(b.postedDate) : new Date(0);
+        const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+        const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
         return dateB.getTime() - dateA.getTime();
       });
     } else if (this.sortBy === 'oldest') {
       filtered.sort((a, b) => {
-        const dateA = a.postedDate ? new Date(a.postedDate) : new Date(0);
-        const dateB = b.postedDate ? new Date(b.postedDate) : new Date(0);
+        const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+        const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
         return dateB.getTime() - dateA.getTime();
       });
     } else if (this.sortBy === 'product') {
@@ -187,7 +253,7 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
   isOwner(announcement: Announcement): boolean {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return false;
-    return announcement.user?.id === currentUser.id;
+    return announcement.donor?.id === currentUser.id;
   }
 
   toggleMyAnnouncements(): void {
@@ -213,7 +279,7 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
           this.editingAnnouncement = fullAnnouncement;
           this.showAnnouncementModal = true;
         },
-        error: () => {
+        error: (error: any)  => {
           this.notificationService.error('Error loading Announcement');
         }
       });
@@ -312,11 +378,11 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
   }
 
   handleLogin(): void {
-    // Implement login logic
+
   }
 
   handleSignup(): void {
-    // Implement signup logic
+
   }
 
   handleLogout(): void {
@@ -340,4 +406,5 @@ export class AnnouncementsDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  protected readonly AnnouncementStatus = AnnouncementStatus;
 }

@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {User} from '../../models/user/user.model';
 import {AuthenticationResponse} from '../../models/authentication-response';
 import {jwtDecode} from 'jwt-decode';
+import {UserProfileService} from '../user/user-profile.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class AuthService {
 
   private currentUserCache: User | null = null;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private userService: UserProfileService) {
 
     this.initCurrentUserCache();
   }
@@ -68,8 +70,21 @@ export class AuthService {
   }
 
   getUserById(id: number): Observable<User> {
-    return this.http.get<User>(`${environment.apiUrl}${id}`);
+    return this.userService.getUserById(id);
   }
+  getFullCurrentUser(): Observable<User | null> {
+    const user = this.getCurrentUser();
+    if (!user || !user.id) {
+      return of(null);
+    }
+
+    return this.getUserById(user.id);
+  }
+  getUserIdFromToken(): number | null {
+    const user = this.getCurrentUser();
+    return user ? user.id : null;
+  }
+
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
@@ -95,7 +110,6 @@ export class AuthService {
 
     return true;
   }
-
 
   getCurrentUser(): User | null {
     if (this.currentUserCache) {

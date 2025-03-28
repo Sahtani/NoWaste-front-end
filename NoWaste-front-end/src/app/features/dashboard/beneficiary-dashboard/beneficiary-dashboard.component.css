@@ -1,0 +1,103 @@
+
+.bg-white {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bg-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+button {
+  transition: all 0.2s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.fixed {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.fixed > div {
+  animation: slideUp 0.3s ease forwards;
+}
+
+.cursor-pointer {
+  transition: background-color 0.2s ease;
+}
+
+.cursor-pointer:hover {
+  background-color: rgba(42, 157, 143, 0.05);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+/*.bg-[#2A9D8F]/10 {
+  position: relative;
+}
+
+.bg-[#2A9D8F]/10 i {
+                   transition: all 0.2s ease;
+                 }
+
+.bg-[#2A9D8F]/10:hover i {
+                  animation: bounce 1s ease infinite;
+                }*/
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}
+
+button {
+  position: relative;
+  overflow: hidden;
+}
+
+button::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: -100%;
+  background-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: none;
+}
+
+button:hover::after {
+  left: 100%;
+  transition: all 0.5s ease;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.text-center .w-16 {
+  animation: pulse 2s infinite ease-in-out;
+}

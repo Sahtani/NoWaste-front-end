@@ -1,0 +1,153 @@
+<app-header
+  (onLogin)="handleLogin()"
+  (onSignup)="handleSignup()"
+  (onLogout)="handleLogout()">
+</app-header>
+<div class="container mx-auto px-4 py-6">
+  <div class="flex flex-col md:flex-row justify-between items-start mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-[#264653]">My Collections Dashboard</h1>
+      <p class="text-gray-600">Manage your reservations and collections in one place</p>
+    </div>
+
+    <div class="mt-4 md:mt-0">
+      <button routerLink="/announcements" class="bg-[#2A9D8F] hover:bg-[#2A9D8F]/90 text-white px-4 py-2 rounded-lg shadow-sm transition-colors">
+        <i class="fas fa-search mr-2"></i> Browse Available Items
+      </button>
+    </div>
+  </div>
+  <!-- Main Content Tabs -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-8">
+    <div class="border-b border-gray-100">
+      <nav class="flex">
+        <button
+          [ngClass]="activeTab === 'active' ? 'border-[#2A9D8F] text-[#2A9D8F]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="px-4 py-3 border-b-2 font-medium text-sm"
+          (click)="activeTab = 'active'">
+          <i class="fas fa-clock mr-2"></i> Active Reservations
+        </button>
+        <button
+          [ngClass]="activeTab === 'upcoming' ? 'border-[#2A9D8F] text-[#2A9D8F]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="px-4 py-3 border-b-2 font-medium text-sm"
+          (click)="activeTab = 'upcoming'">
+          <i class="fas fa-calendar-alt mr-2"></i> Upcoming Collections
+        </button>
+        <button
+          [ngClass]="activeTab === 'history' ? 'border-[#2A9D8F] text-[#2A9D8F]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="px-4 py-3 border-b-2 font-medium text-sm"
+          (click)="activeTab = 'history'">
+          <i class="fas fa-history mr-2"></i> Collection History
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-4">
+      <div *ngIf="activeTab === 'active'">
+        <div *ngIf="reservations.length === 0" class="text-center py-10">
+          <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-bookmark text-gray-400 text-xl"></i>
+          </div>
+          <h3 class="text-gray-500 font-medium mb-1">No active reservations</h3>
+          <p class="text-gray-400 text-sm">Browse available items to make reservations</p>
+          <button routerLink="/announcements" class="mt-4 px-4 py-2 bg-[#2A9D8F]/10 hover:bg-[#2A9D8F]/20 text-[#2A9D8F] rounded-lg transition-colors">
+            Browse Announcements
+          </button>
+        </div>
+
+        <div *ngIf="reservations.length > 0" class="space-y-4">
+          <div *ngFor="let reservation of reservations" class="border border-gray-100 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex flex-col md:flex-row justify-between">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 mr-4">
+                  <img *ngIf="reservation.image" [src]="reservation.image" alt="Product" class="w-16 h-16 rounded-lg object-cover">
+                  <div *ngIf="!reservation.image" class="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center">
+                    <i class="fas fa-box text-gray-400"></i>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="font-medium text-[#264653]">{{ reservation.status }}</h3>
+                  <p class="text-sm text-gray-500">{{ reservation.announcement.donor?.name }}</p>
+                  <div class="flex items-center text-sm text-gray-500 mt-1">
+                    <i class="fas fa-map-marker-alt mr-1 text-[#2A9D8F]"></i>
+                    <span>{{ reservation.announcement.status }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4 md:mt-0 flex flex-col items-end">
+                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                  Reserved on {{ reservation.reservationDate | date }}
+                </span>
+                <div class="mt-2 flex space-x-2">
+                  <button (click)="viewDetails(reservation)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-sm">
+                    <i class="fas fa-info-circle mr-1"></i> Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'upcoming'">
+        <!-- Similar layout to active reservations -->
+        <div *ngIf="upcomingCollections.length === 0" class="text-center py-10">
+          <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-calendar-alt text-gray-400 text-xl"></i>
+          </div>
+          <h3 class="text-gray-500 font-medium mb-1">No upcoming collections</h3>
+          <p class="text-gray-400 text-sm">You don't have any scheduled pickups</p>
+        </div>
+
+      </div>
+
+      <div *ngIf="activeTab === 'history'">
+        <!-- Similar layout to active reservations -->
+        <div *ngIf="collectionHistory.length === 0" class="text-center py-10">
+          <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-history text-gray-400 text-xl"></i>
+          </div>
+          <h3 class="text-gray-500 font-medium mb-1">No collection history</h3>
+          <p class="text-gray-400 text-sm">Your past collections will appear here</p>
+        </div>
+
+        <!-- History list will go here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chat Modal -->
+<div *ngIf="showChatModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-lg h-[32rem] flex flex-col">
+    <div class="border-b border-gray-100 px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center">
+        <div class="w-8 h-8 rounded-full overflow-hidden mr-3">
+          <img *ngIf="selectedChat?.image" [src]="selectedChat.image" alt="Contact" class="h-full w-full object-cover">
+          <div *ngIf="!selectedChat?.image" class="w-full h-full bg-[#2A9D8F]/20 flex items-center justify-center text-[#2A9D8F]">
+            {{ selectedChat?.title?.charAt(0).toUpperCase() || 'U' }}
+          </div>
+        </div>
+        <div>
+          <h3 class="font-medium text-[#264653]">{{ selectedChat?.title || 'Chat' }}</h3>
+          <p class="text-xs text-gray-500">{{ selectedChat?.subtitle || '' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+      <!-- Messages will be displayed here -->
+      <div *ngFor="let msg of chatMessages" [ngClass]="{'text-right': msg.isFromMe}" class="mb-3">
+        <div [ngClass]="{'bg-[#2A9D8F]/10 text-[#264653] ml-auto': msg.isFromMe, 'bg-white text-[#264653]': !msg.isFromMe}"
+             class="inline-block max-w-xs sm:max-w-sm py-2 px-3 rounded-lg shadow-sm">
+          <p class="text-sm">{{ msg.text }}</p>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">{{ msg.time | date:'shortTime' }}</p>
+      </div>
+    </div>
+
+    <div class="p-3 border-t border-gray-100">
+      <div class="flex items-center">
+      </div>
+    </div>
+  </div>
+</div>

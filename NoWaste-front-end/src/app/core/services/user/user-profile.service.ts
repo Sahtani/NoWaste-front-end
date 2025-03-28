@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import {Observable, BehaviorSubject, tap, catchError, throwError} from 'rxjs';
 import {User, UserStats} from '../../models/user/user.model';
 import {environment} from '../../../../environments/environment';
 
@@ -37,5 +37,13 @@ export class UserProfileService {
 
   getCurrentUserProfile(): User | null {
     return this.userProfileSubject.value;
+  }
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${environment.apiUrl}${id}`).pipe(
+      catchError(error => {
+        console.error('Error fetching user by ID:', error);
+        return throwError(() => new Error('Failed to fetch user details'));
+      })
+    );
   }
 }
